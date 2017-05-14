@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增督案单</title>
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="id" value="">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>督案单编号</label>
+                    <div class="controls">
+                        <input name="caselistNo" type="grade" data-rules="{required:true}" class="input-normal control-text caselistNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo" type="text" data-rules="{required:true}" class="input-normal control-text caseNo" readonly="readonly">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>办案民警</label>
+                    <div class="controls">
+                        <input name="policeName" type="grade" data-rules="{required:true}" class="input-normal control-text policeName" readonly="readonly">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>审核人(登录名)</label>
+                    <div class="controls">
+                        <input name="policeName" type="audit" class="input-normal control-text audit">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>查证时间</label>
+                    <div class="controls">
+                        <input name="caseendTime" id="caseendTime" class="laydate-icon caseendTime" data-rules="{required:true}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row"  style="height: 200px;">
+                <div class="control-group span15">
+                    <label class="control-label">执法建议</label>
+                    <div class="controls control-row4">
+                        <textarea name="suggest" class="input-large suggest" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="control-group span15">
+                    <label class="control-label">督案单图片上传</label>
+                    <input type="hidden" class="url" name="url" value="" />
+                    <div class="controls control-row4">
+                        <button id="addLabProdPic1">选择图片</button>
+                        <button id="addLabProdPic2">选择图片</button>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 100px;"></div>
+            <div class="row" style="height: 500px">
+                <div class="control-group span24">
+                    <label class="control-label">图片展示</label>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl1"/>
+                        <input type="hidden" class="fileUrlInput1"/>
+                    </div>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl2"/>
+                        <input type="hidden" class="fileUrlInput2"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/jquery.js"></script>
+<script type="text/javascript" src="../assets/ajaxupload.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        //上传图片
+        new AjaxUpload('#addLabProdPic1', {
+            action: url_server + '/erp/upload',
+            name: 'picFile',
+            responseType: 'json',
+            onSubmit : function(file , ext){
+                if (ext && /^(jpg|png|bmp)$/.test(ext.toLowerCase())){
+                    this.setData({
+                        'picName': file
+                    });
+                } else {
+                    alert("请上传格式为 jpg|png|bmp 的图片！");
+                    return false;
+                }
+            },
+            onComplete : function(file,response){
+                if(response.error) {
+                    alert(response.error);
+                    return;
+                }
+                $(".fileUrlInput1").val(response.pictureName + ";");
+                $("#fileUrl1").attr("src",img_server + response.pictureName);
+            }
+        });
+
+
+        new AjaxUpload('#addLabProdPic2', {
+            action: url_server + '/erp/upload',
+            name: 'picFile',
+            responseType: 'json',
+            onSubmit : function(file , ext){
+                if (ext && /^(jpg|png|bmp)$/.test(ext.toLowerCase())){
+                    this.setData({
+                        'picName': file
+                    });
+                } else {
+                    alert("请上传格式为 jpg|png|bmp 的图片！");
+                    return false;
+                }
+            },
+            onComplete : function(file,response){
+                if(response.error) {
+                    alert(response.error);
+                    return;
+                }
+                $(".fileUrlInput2").val(response.pictureName + ";");
+                $("#fileUrl2").attr("src",img_server + response.pictureName);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    function showTime(){
+        var caseendTime = {
+            elem: '#caseendTime',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+            }
+        };
+        laydate(caseendTime);
+    }
+    showTime();
+
+    $(function(){
+
+        var url_param = location.href;
+        var caseId = url_param.substr(url_param.lastIndexOf("=")+1);
+        if (null != caseId && "" != caseId) {
+            $.ajax({
+                type: "GET",
+                url: url_server + "/erp/case/findById?id="+caseId,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 200) {
+                        $(".caseNo").val(data.caseDto.caseNo);
+                        $(".policeName").val(data.caseDto.policeLoginName);
+                    } else if (data.code == 100) {
+                        BUI.Message.Alert("此条案件已经不存在!!");
+                    } else {
+                        BUI.Message.Alert("操作失败,请返回重试!!");
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        }
+
+
+
+
+        $(".button-primary").click(function(){
+            if ($(".caselistNo").val() == "" || $(".audit").val() == ""  ) {
+                BUI.Message.Alert('编号和审核人不能为空');
+            } else {
+            	var fileUrlInput1 = $(".fileUrlInput1").val();
+            	var fileUrlInput2 = $(".fileUrlInput2").val();
+            	var url = "";
+            	if (fileUrlInput1 != "") {
+            		url = url + fileUrlInput1;
+            	}
+            	if (fileUrlInput2 != "") {
+            		url = url + fileUrlInput2;
+            	}
+                var caseListDto = {
+                    "case_id" :caseId,
+                    "caseNo": $(".caseNo").val(),
+                    "policeName": $(".policeName").val(),
+                    "caselistNo": $(".caselistNo").val(),
+                    "audit": $(".audit").val(),
+                    "url" :  url,
+                    "suggest" : $(".suggest").val(),
+                    "caseendTime": $(".caseendTime").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/caselist/save",
+                    data:  JSON.stringify(caseListDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 501) {
+                            BUI.Message.Alert('督案单已存在！');
+                        } else if(data.code == 400) {
+                            BUI.Message.Alert('您没有权限操作此功能！');
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('请求异常,异常代码为201！');
+                        }else if(data.code == 200) {
+                            location.href = "success.html"
+                        } else if(data.code == 300) {
+                            BUI.Message.Alert('您输入的审核人不是所内领导！');
+                        } else {
+                            BUI.Message.Alert('用户登录超时!!请重新登录');
+                        }
+                    },
+                    error: function () {
+                        alert("请求失败");
+                    }
+                });
+            }
+        });
+
+    })
+
+    $(function(){
+        //获取办案民警
+        $(".caseNo").blur(function(){
+            var casedto = {
+                "caseNo": $(".caseNo").val()
+            };
+            if ($(".caseNo").val() != null && $(".caseNo").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/findByNo",
+                    data: JSON.stringify(casedto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            alert("案件不存在");
+                            $(".caseNo").val("");
+                            $(".policeName").val("");
+                        } else {
+                            $(".policeName").val(data.data);
+                        }
+                    },
+                    error: function () {
+                        alert("获取民警失败");
+                        $(".policeName").val("");
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    BUI.use('bui/uploader',function (Uploader) {
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader = new Uploader.Uploader({
+            render: '#J_Uploader',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $(".url").val($(".url").val() + result +";");
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+        }).render();
+
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader1 = new Uploader.Uploader({
+            render: '#J_Uploader1',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $(".url").val($(".url").val() + result +";");
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl1").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+        }).render();
+    });
+</script>
+</body>
+</html>

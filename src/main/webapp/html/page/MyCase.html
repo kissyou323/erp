@@ -1,0 +1,357 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>固定资产</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="../assets/js/layout-min.js"></script>
+    <script type="text/javascript" src="../assets/js/uploader-min.js"></script>
+    <script type="text/javascript" src="../assets/util.js"></script>
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+        .bui-uploader:nth-child(2) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="searchForm" class="form-horizontal">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">案件编号：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="caseNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件名称：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="caseName">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件状态：</label>
+                    <div class="controls">
+                        <select name="caseStatus" class="control-text">
+                        	<option value="">未选择</option>
+                            <option value="1">未结案</option>
+                            <option value="2">已结案</option>
+                            <option value="3">案件撤销</option>
+                        </select>
+                    </div>
+                </div>
+                <!--<div class="control-group span8">
+                    <label class="control-label">档案状态：</label>
+                    <div class="controls">
+                        <select name="fileStatus" class="control-text">
+                            <option value="">未选择</option>
+                            <option value="2">建档</option>
+                            <option value="1">归档</option>
+                            <option value="3">借出</option>
+                            <option value="4">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件类型：</label>
+                    <div class="controls">
+                        <select name="style" class="control-text">
+                            <option value="">未选择</option>
+                            <option value="1">行政</option>
+                            <option value="2">刑事</option>
+                        </select>
+                    </div>
+                </div>-->
+                <!--<div class="control-group span12">-->
+                    <!--<label class="control-label">案发时间：</label>-->
+                    <!--<div class="controls">-->
+                        <!--<div name="caseTime_start" id="start" class="laydate-icon span4"></div><span class="span1" style="text-align: center">__</span>-->
+                        <!--<div name="caseTime_end" id="end"  class="laydate-icon span4" ></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="control-group span12">-->
+                    <!--<label class="control-label">入库时间：</label>-->
+                    <!--<div class="controls">-->
+                        <!--<div name="caseTime_start" id="startt" class="laydate-icon span4"></div><span class="span1" style="text-align: center">__</span>-->
+                        <!--<div name="caseTime_end" id="endd"  class="laydate-icon span4" ></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="control-group span9">-->
+                    <!--<label class="control-label">结案时间：</label>-->
+                    <!--<div class="controls">-->
+                        <!--<input type="text" class="laydate-icon span4" name="endTime_start"><span> - </span><input name="endTime_end" type="text" class=" calendar">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="control-group span9">
+                    <div class="span3 offset2">
+                        <button  type="button" id="btnSearch" class="button button-primary">搜索</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="search-grid-container">
+        <div id="grid"></div>
+    </div>
+
+</div>
+<div id="content" class="hide">
+    <form id="J_Form" class="form-horizontal" action="#">
+        <input type="hidden" name="caseId" value="">
+        <input type="hidden" name="caseNo" value="">
+        <div class="row">
+            <div class="control-group span15">
+                <label class="control-label">结案描述</label>
+                <div class="controls control-row4">
+                    <textarea name="endcase_explain" class="input-large" type="text"></textarea>
+                    <input type="hidden" name="case_add_url" id="case_add_url"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group span15">
+                <label class="control-label">结案单图片上传</label>
+                <div class="controls control-row4">
+                    <div id="J_Uploader"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 300px">
+            <div class="control-group span15">
+                <label class="control-label">图片展示</label>
+                <div class="controls control-row4">
+                    <img src="" width="130" height="180" id="fileUrl"/>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+
+
+    BUI.use('common/search',function (Search) {
+
+        var caseStatus = {"1":"未结案","2":"已结案","3":"案件撤销"};
+        var fileStatus = {"2":"建档","1":"归档","3":"借出","4":"其他"};
+        var endcasestatus = {"1":"未结案","2":"案件审核中","3":"已结案"};
+        var style = {"1":"行政","2":"刑事"};
+        editing = new BUI.Grid.Plugins.DialogEditing({
+            contentId : 'content', //设置隐藏的Dialog内容
+            autoSave : true, //添加数据或者修改数据时，自动保存
+            triggerCls : 'btn-edit'
+        }),
+        columns = [
+//            {title:'案件Id',dataIndex:'caseId',width:100},
+//            {title:'案件编号',dataIndex:'caseNo',width:80},
+            {title:'案件编号',dataIndex:'caseNo',width:100,renderer:function(value,obj){
+                return Search.createLink({
+                    id : 'detail' + value,
+                    title : obj.caseName + '详情',
+                    text : value,
+                    href : '../page/CaseDetail.html?caseId=' + obj.caseId
+                });
+            }},
+            {title:'案件名称',dataIndex:'caseName',width:100},
+            /*{title:'办案民警登录名',dataIndex:'policeLoginName',width:100},*/
+//            {title:'办案民警',dataIndex:'policeName'},
+            {title:'案发时间',dataIndex:'caseTime',width:100,renderer:BUI.Grid.Format.datetimeRenderer},
+            {title:'入库时间',dataIndex:'startTime',width:100,renderer:BUI.Grid.Format.datetimeRenderer},
+            {title:'结案时间',dataIndex:'endTime',width:100,renderer:BUI.Grid.Format.datetimeRenderer},
+            {title:'案卷状态',dataIndex:'caseStatus',width:60,width:60,renderer:BUI.Grid.Format.enumRenderer(caseStatus)},
+//            {title:'档案状态',dataIndex:'fileStatus',width:300,width:60,renderer:BUI.Grid.Format.enumRenderer(fileStatus)},
+            {title:'案件类型',dataIndex:'style',width:60,width:60,renderer:BUI.Grid.Format.enumRenderer(style)},
+//            {title:'涉案财物编号',dataIndex:'possessionsNo'},
+//            {title:'涉案财物名称',dataIndex:'possessionsName'},
+//            {title:'案发地点',dataIndex:'caseAddress',width:100},
+//            {title:'简要案情',dataIndex:'caseExplain',width:200},
+            {title:'驳回意见',dataIndex:'rejectmsg',width:160},
+            {title:'结案状态',dataIndex:'endcaseStatus',width:300,width:60,renderer:BUI.Grid.Format.enumRenderer(endcasestatus)},
+            {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
+                var  editStr1;
+                if (obj.endcaseStatus == 1) {
+//                    editStr1 = '<span class="grid-command btn-edit" title="申请结案">申请结案</span>';
+                    editStr1 = Search.createLink({ //链接使用 此方式
+                        id : 'editId' + obj.caseId,
+                        title : '申请结案',
+                        text : '申请结案',
+                        href : '../page/ApplyEndCase.html?caseId=' + obj.caseId
+                    });
+                }
+
+                return editStr1;
+            }}
+        ],
+
+        store = Search.createStore(url_server + '/erp/case/myCaseList',{
+            proxy : {
+                save : { //也可以是一个字符串，那么增删改，都会往那么路径提交数据，同时附加参数saveType
+                    addUrl : url_server + '/erp/case/insert',
+                    updateUrl : url_server + '/erp/case/endcase',
+                    removeUrl : url_server +  '/erp/case/delete'
+                }/*,
+                 method : 'POST'*/
+            },
+            autoSync : true//保存数据后，自动更新
+
+        }),
+        gridCfg = Search.createGridCfg(columns,{
+//            plugins : [editing,BUI.Grid.Plugins.CheckSelection,BUI.Grid.Plugins.AutoFit] // 插件形式引入多选表格
+        });
+
+        var  search = new Search({
+            store : store,
+            gridCfg : gridCfg
+        }),
+        grid = search.get('grid');
+
+        function addFunction(){
+            var newData = {isNew : true}; //标志是新增加的记录
+            editing.add(newData,'name'); //添加记录后，直接编辑
+        }
+
+
+        //删除操作
+        function delFunction(){
+            var selections = grid.getSelection();
+            delItems(selections);
+        }
+
+        function delItems(items){
+            var ids = [];
+            BUI.each(items,function(item){
+            	ids.push(item.caseId);
+            });
+
+            if(ids.length){
+                BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+                    store.save('remove',{fid : ids});
+                },'question');
+            }
+        }
+
+        //监听事件，删除一条记录
+        grid.on('cellclick',function(ev){
+            var sender = $(ev.domTarget); //点击的Dom
+            if(sender.hasClass('btn-del')){
+                var record = ev.record;
+                delItems([record]);
+            }
+        });
+
+    });
+
+
+
+    $(function(){
+        //获取办案民警
+        $(".policeLoginName").blur(function(){
+            var user = {
+                "loginName": $(".policeLoginName").val()
+            };
+            if ($(".policeLoginName").val() != null && $(".policeLoginName").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/user/findByNo",
+                    data: JSON.stringify(user),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            $(".policeName").val("");
+                        } else {
+                            $(".policeName").val(data.data.userName);
+                        }
+                    },
+                    error: function () {
+                        alert("用户记录不存在");
+                    }
+                });
+            }
+        });
+        //获取涉案财物
+        $(".possessionsNo").blur(function(){
+            var possessions = {
+                "possessionsNo": $(".possessionsNo").val()
+            };
+            if ($(".possessionsNo").val() != null && $(".possessionsNo").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/possessions/findByNo",
+                    data: JSON.stringify(possessions),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            $(".possessionsName").val("");
+                        } else {
+                            $(".possessionsName").val(data.data.possessionsName);
+                        }
+                    },
+                    error: function () {
+                        alert("用户记录不存在");
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    BUI.use('bui/uploader',function (Uploader) {
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader = new Uploader.Uploader({
+            render: '#J_Uploader',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $("#case_add_url").val(result);
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+        }).render();
+    });
+</script>
+
+</body>
+</html>

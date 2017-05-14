@@ -1,0 +1,277 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>案件合并</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo" type="grade" data-rules="{required:true}" class="input-normal control-text caseNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件名称</label>
+                    <div class="controls">
+                        <input name="caseName" type="text" data-rules="{required:true}" class="input-normal control-text caseName">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>档案状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="fileStatus" class="input-normal fileStatus">
+                            <option value="5">归档</option>
+                            <option value="2">建档</option>
+                            <option value="1">还入</option>
+                            <option value="3">借出</option>
+                            <option value="4">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                <label class="control-label"><s>*</s>案件类型：</label>
+                <div class="controls">
+                    <select  data-rules="{required:true}"  name="style" class="input-normal style">
+                        <option value="1">行政</option>
+                        <option value="2">刑事</option>
+                    </select>
+                </div>
+            </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案卷状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="caseStatus" class="input-normal caseStatus">
+                            <option value="2">已结案</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">结案时间</label>
+                    <div class="controls">
+                        <!--<input name="endTime" type="text" class="calendar">-->
+                        <input name="endTime" id="endTime" class="laydate-icon endTime"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span15" style="height: 200px;">
+                    <label class="control-label">简要说明</label>
+                    <div class="controls control-row4">
+                        <textarea name="caseExplain" class="input-large caseExplain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <hr style="border:1px dotted #036" />
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo1" type="grade" class="input-normal control-text caseNo1">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件名称</label>
+                    <div class="controls control-row4">
+                        <input name="caseName1" type="grade" class="input-normal control-text caseName1" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo2" type="grade" class="input-normal control-text caseNo2">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件名称</label>
+                    <div class="controls control-row4">
+                        <input name="caseName2" type="grade" class="input-normal control-text caseName2" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">串并</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function showTime(){
+        var endTime = {
+            elem: '#endTime',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+                caseTime.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        laydate(endTime);
+    }
+    showTime();
+
+    $(function(){
+        //获取案件名称
+        $(".caseNo1").blur(function(){
+            var caseDto = {
+                "caseNo": $(".caseNo1").val()
+            };
+            if ($(".caseNo1").val() != null && $(".caseNo1").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/findByNoAndName",
+                    data: JSON.stringify(caseDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            $(".caseName1").val("");
+                            alert("案件不存在");
+                        } else {
+                            $(".caseName1").val(data.data.caseName);
+                        }
+                    },
+                    error: function () {
+                        alert("案件请求异常");
+                    }
+                });
+            } else {
+                $(".caseName1").val("");
+            }
+        });
+
+        //获取案件名称
+        $(".caseNo2").blur(function(){
+            var caseDto = {
+                "caseNo": $(".caseNo2").val()
+            };
+            if ($(".caseNo2").val() != null && $(".caseNo2").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/findByNoAndName",
+                    data: JSON.stringify(caseDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            $(".caseName2").val("");
+                            alert("案件不存在");
+                        } else {
+                            $(".caseName2").val(data.data.caseName);
+                        }
+                    },
+                    error: function () {
+                        alert("案件请求异常");
+                    }
+                });
+            } else {
+                $(".caseName2").val("");
+            }
+        });
+
+        $(".button-primary").click(function(){
+
+            if ($(".caseNo").val() == "" || $(".caseName").val() == "" || $(".caseName1").val() == "" || $(".caseName2").val() == "") {
+                BUI.Message.Alert('编号|名称都不能为空');
+            } else if ($(".caseName1").val() == $(".caseName2").val()){
+                BUI.Message.Alert('同一个案件不能合并');
+            } else if ($(".caseNo").val() == $(".caseNo1").val() || $(".caseNo").val() == $(".caseNo2").val()){
+                var caseDto = {
+                    "caseNo": $(".caseNo").val(),
+                    "caseName": $(".caseName").val(),
+                    "caseStatus": $(".caseStatus").val(),
+                    "fileStatus": $(".fileStatus").val(),
+                    "style": $(".style").val(),
+                    "endTime": $(".endTime").val(),
+                    "caseExplain": $(".caseExplain").val(),
+                    "caseNos" : [$(".caseNo1").val(),$(".caseNo2").val()]
+                };
+                console.info(caseDto)
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/merge",
+                    data:  JSON.stringify(caseDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 501) {
+                            BUI.Message.Alert('编号已存在！');
+                        } else if(data.code == 5001) {
+                            BUI.Message.Alert('二维码生成失败,请联系管理员！');
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('请求异常,异常代码为201！');
+                        }else if(data.code == 200) {
+                            location.href = "success.html"
+                        } else {
+                            BUI.Message.Alert('用户登录超时!!请重新登录');
+                        }
+                    },
+                    error: function () {
+                        alert("请求失败");
+                    }
+                });
+            } else {
+                BUI.Message.Alert('串并主案件的编号必须是子案件中的任意一个');
+            }
+        });
+    })
+
+</script>
+
+</body>
+</html>

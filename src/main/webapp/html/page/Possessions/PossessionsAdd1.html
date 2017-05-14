@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>涉案财物添加</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="possessionsId" value="">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>涉案财物编号</label>
+                    <div class="controls">
+                        <input name="possessionsNo" type="grade" data-rules="{required:true}" class="input-normal control-text possessionsNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>涉案财物名称</label>
+                    <div class="controls">
+                        <input name="possessionsName" type="text" data-rules="{required:true}" class="input-normal control-text possessionsName">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>型号/规格</label>
+                    <div class="controls">
+                        <input name="style" type="grade" data-rules="{required:true}" class="input-normal control-text style">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>保管员</label>
+                    <div class="controls">
+                        <input name="keeper" type="grade" data-rules="{required:true}" class="input-normal control-text keeper">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>持有人</label>
+                    <div class="controls">
+                        <input name="username" type="grade" data-rules="{required:true}" class="input-normal control-text username">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>入库时间</label>
+                    <div class="controls">
+                        <!--<input name="startTime" type="text" data-rules="{required:true}" class="calendar">-->
+                        <input name="startTime" id="start" class="laydate-icon startTime" data-rules="{required:true}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="status" class="input-normal status">
+                            <option value="1">库存</option>
+                            <option value="2">持有人领回</option>
+                            <!--<option value="3">借出</option>-->
+                            <option value="6">未入库</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span15">
+                    <label class="control-label">涉案财物说明</label>
+                    <div class="controls control-row4" style="height: 200px;">
+                        <textarea name="possessionsExplain" class="input-large possessionsExplain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            <hr style="border:1px dotted #036" />
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">领回人</label>
+                    <div class="controls">
+                        <input name="holderName" type="grade" class="input-normal control-text holderName">
+                    </div>
+                </div>
+                <div class="control-group span15">
+                    <label class="control-label">领回时间</label>
+                    <div class="controls control-row4">
+                        <!--<input name="holderTime" type="text"  class="calendar">-->
+                        <input name="holderTime" id="end" class="laydate-icon holderTime"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span15">
+                    <label class="control-label">结案单图片上传</label>
+                    <input type="hidden" name="possessionsPic" id="possessionsPic" class="possessionsPic"/>
+                    <div class="controls control-row4">
+                        <div id="J_Uploader"></div>
+                        <div id="J_Uploader1"></div>
+                        <div id="J_Uploader2"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 100px;"></div>
+            <div class="row" style="height: 500px">
+                <div class="control-group span24" style="width: 1200px;">
+                    <label class="control-label">图片展示</label>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl"/>
+                    </div>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl1"/>
+                    </div>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl2"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="../../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../../assets/util.js"></script>
+<script type="text/javascript" src="../../assets/json2.js"></script>
+<script type="text/javascript" src="../../assets/localStorage.js"></script>
+<script type="text/javascript" src="../../assets/laydate.js"></script>
+<script type="text/javascript" src="../../assets/js/layout-min.js"></script>
+
+<script type="text/javascript" src="../../assets/js/uploader-min.js"></script>
+<!--<script type="text/javascript" src="../../assets/jquery.upload.js"></script>-->
+<script type="text/javascript" src="../../assets/js/uploader.js"></script>
+
+<script src="http://g.alicdn.com/bui/bui/1.1.21/config.js"></script>
+
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function showTime(){
+        var start = {
+            elem: '#start',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+
+            }
+        };
+        var end = {
+            elem: '#end',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+
+            }
+        };
+        laydate(start);
+        laydate(end);
+    }
+    showTime();
+
+    $(function(){
+        $(".button-primary").click(function(){
+            if ($(".possessionsNo").val() == "" || $(".possessionsName").val() == "") {
+                BUI.Message.Alert('编号和名称不能为空');
+            } else {
+                var possessionsDto = {
+                    "possessionsNo": $(".possessionsNo").val(),
+                    "possessionsName": $(".possessionsName").val(),
+                    "style": $(".style").val(),
+                    "keeper": $(".keeper").val(),
+                    "username": $(".username").val(),
+                    "startTime": $(".startTime").val(),
+                    "status": $(".status").val(),
+                    "possessionsExplain": $(".possessionsExplain").val(),
+                    "holderName": $(".holderName").val(),
+                    "holderTime": $(".holderTime").val(),
+                    "possessionsPic" : $(".possessionsPic").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/possessions/insert",
+                    data: JSON.stringify(possessionsDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 501) {
+                            BUI.Message.Alert('编号已存在！');
+                        } else if(data.code == 200) {
+                            location.href = "../success.html"
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('添加失败,请联系管理员！');
+                        } else {
+                            alert("登录超时.请重新登录!");
+                            parent.location = url_server + "/erp/html/html/login.html";
+                        }
+                    },
+                    error: function () {
+                        alert("操作失败");
+                    }
+                });
+            }
+        });
+
+    });
+    BUI.use('bui/uploader',function (Uploader) {
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader = new Uploader.Uploader({
+            render: '#J_Uploader',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $("#possessionsPic").val($("#possessionsPic").val() + result +";");
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+
+        }).render();
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader1 = new Uploader.Uploader({
+            render: '#J_Uploader1',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $("#possessionsPic").val($("#possessionsPic").val() + result +";");
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl1").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+        }).render();
+
+        /**
+         *  返回数据的格式
+         *  默认是 {url : 'url'},否则认为上传失败
+         *  可以通过isSuccess 更改判定成功失败的结构
+         */
+        var uploader2 = new Uploader.Uploader({
+            render: '#J_Uploader2',
+            url: url_server + '/erp/uploadFile/uploadFlie',
+            rules: {
+                //文的类型
+                ext: ['.png,.jpg','文件类型只能为{0}'],
+                //上传的最大个数
+                max: [1, '文件的最大个数不能超过{0}个'],
+                //文件大小的最小值,这个单位是kb
+                minSize: [10, '文件的大小不能小于{0}KB'],
+                //文件大小的最大值,单位也是kb
+                maxSize: [2048, '文件大小不能大于2M']
+            },
+            //根据业务需求来判断上传是否成功
+            isSuccess: function(result){
+                if(result != ""){
+                    $("#possessionsPic").val($("#possessionsPic").val() + result +";");
+                    BUI.Message.Alert("上传成功,文件已保存到目录：" + result);
+                    $("#fileUrl2").attr("src",img_server + result);
+                }else{
+                    BUI.Message.Alert("上传失败");
+                }
+            }
+        }).render();
+    });
+</script>
+
+
+
+</body>
+</html>

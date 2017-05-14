@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>审核详情页面</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../assets/util.js"></script>
+    <script type="text/javascript" src="../assets/json2.js"></script>
+    <script type="text/javascript" src="../assets/localStorage.js"></script>
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="caseId" class="caseId" value="">
+
+            <div id="yes">
+                <div class="row">
+                    <div class="control-group span15" style="height: 200px;">
+                        <label class="control-label">结案描述</label>
+                        <div class="controls control-row4">
+                            <textarea name="endcase_explain" class="input-large endcaseExplain" type="text" readonly="readonly"></textarea>
+                            <input type="hidden" name="case_add_url" id="case_add_url" class="caseAddUrl"/>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 100px;"></div>
+                <div class="row" style="height: 500px">
+                    <div class="control-group span24">
+                        <label class="control-label">结案文件图片展示</label>
+                        <div class="controls control-row4">
+                            <img src="" width="330" height="380" id="fileUrl"/>
+                        </div>
+                        <div class="controls control-row4">
+                            <img src="" width="330" height="380" id="fileUrl1"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-actions actions-bar">
+                    <div class="span13 offset3 ">
+                        <button type="button" class="button button-primary">通过</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="control-group span15" style="height: 200px;">
+                        <label class="control-label">驳回意见</label>
+                        <div class="controls control-row4">
+                            <textarea name="rejectmsg" class="input-large rejectmsg" type="text"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-actions actions-bar">
+                    <div class="span13 offset3 ">
+                        <button type="button" class="button rejectbtm">驳回</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        var url_param = location.href;
+        var caseId = url_param.substr(url_param.lastIndexOf("=")+1);
+
+        if (null != caseId && "" != caseId) {
+            $.ajax({
+                type: "GET",
+                url: url_server + "/erp/case/findById?id="+caseId,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 200) {
+
+                        $(".endcaseExplain").val(data.caseDto.endcaseExplain);
+                        $(".caseId").val(data.caseDto.caseId);
+                        var url = data.caseDto.caseAddUrl;
+                        var array = new Array();
+                        array = url.split(";");
+                        $("#fileUrl").attr("src",img_server + array[0]);
+                        $("#fileUrl1").attr("src",img_server + array[1]);
+                    } else if (data.code == 100) {
+                        BUI.Message.Alert("此条案件已经不存在!!");
+                    } else {
+                        BUI.Message.Alert("操作失败,请返回重试!!");
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        }
+
+
+        $(".button-primary").click(function(){
+            $.ajax({
+                type: "get",
+                url: url_server + "/erp/case/endCaseYes?caseId=" + caseId,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if(data.code == 200) {
+                        location.href = "success.html"
+                    } else if (data.code == 404) {
+                        BUI.Message.Alert("请求资源不存在!!");
+                    } else if (data.code == 400) {
+                        BUI.Message.Alert("您没有缺陷操作此功能!!");
+                    } else {
+                        BUI.Message.Alert('用户登录超时!!请退出重新登录');
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        });
+
+        $(".rejectbtm").click(function(){
+            $.ajax({
+                type: "get",
+                url: url_server + "/erp/case/rejectCase?caseId=" + caseId + "&rejectmsg=" +  $(".rejectmsg").val(),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if(data.code == 200) {
+                        location.href = "success.html"
+                    } else if (data.code == 404) {
+                        BUI.Message.Alert("请求资源不存在!!");
+                    } else if (data.code == 400) {
+                        BUI.Message.Alert("您没有权限操作此功能!!");
+                    } else {
+                        BUI.Message.Alert('用户登录超时!!请退出重新登录');
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        });
+
+    })
+
+</script>
+
+</body>
+</html>

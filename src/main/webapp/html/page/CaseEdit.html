@@ -1,0 +1,574 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title> 修改案件</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../assets/util.js"></script>
+    <script type="text/javascript" src="../assets/json2.js"></script>
+    <script type="text/javascript" src="../assets/localStorage.js"></script>
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="caseId" value="" class="caseId">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo" type="grade" data-rules="{required:true}" class="input-normal control-text caseNo" readonly="readonly">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件名称</label>
+                    <div class="controls">
+                        <input name="caseName" type="text" data-rules="{required:true}" class="input-normal control-text caseName">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- <div class="control-group span8">
+                    <label class="control-label"><s>*</s>办案民警登录名</label>
+                    <div class="controls">
+                        <input name="policeLoginName" type="grade" data-rules="{required:true}" class="input-normal control-text policeLoginName">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>办案民警</label>
+                    <div class="controls">
+                        <input name="policeName" type="grade" data-rules="{required:true}" class="input-normal control-text policeName" readonly="readonly">
+                    </div>
+                </div> -->
+                
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>办案民警</label>
+                    <div class="controls">
+                    	<input name="policeLoginName" type="hidden" class="input-normal control-text policeLoginName" id="policeLoginName">
+                        <input name="policeName" type="grade" class="input-normal control-text policeName" readonly="readonly" id="policeName">
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物编号</label>
+                    <div class="controls">
+                        <input name="possessionsNo" type="grade"  class="input-normal control-text possessionsNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物名称</label>
+                    <div class="controls">
+                        <input name="possessionsName" type="grade"  class="input-normal control-text possessionsName" readonly="readonly">
+                    </div>
+                </div>
+            </div> -->
+            
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案发地点</label>
+                    <div class="controls">
+                        <input name="caseAddress" type="grade" data-rules="{required:true}" class="input-normal control-text caseAddress">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案卷状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="caseStatus" class="input-normal caseStatus">
+                            <option value="1">未结案</option>
+                            <option value="2">已结案</option>
+                            <option value="3">案件撤销</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>档案状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="fileStatus" class="input-normal fileStatus">
+                            <option value="2">建档</option>
+                            <option value="1">还入</option>
+                            <option value="3">借出</option>
+                            <option value="5">归档</option>
+                            <option value="4">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件类型：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="style" class="input-normal style">
+                            <option value="1">行政</option>
+                            <option value="2">刑事</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案发时间</label>
+                    <div class="controls">
+                        <input name="caseTime" id="caseTime" class="laydate-icon caseTime" data-rules="{required:true}"/>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>入库时间</label>
+                    <div class="controls">
+                        <input name="startTime" id="startTime" class="laydate-icon startTime" data-rules="{required:true}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">结案时间</label>
+                    <div class="controls">
+                        <!--<input name="endTime" type="text" class="calendar">-->
+                        <input name="endTime" id="endTime" class="laydate-icon endTime"/>
+                    </div>
+                </div>
+            </div>
+             <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物</label>
+                    <div class="controls">
+                    	<input name="possessionsList" type="button"  class="input-normal control-text possessionsList" id="possessionsList" readonly="readonly" />
+                        <input name="possessionsNo" type="hidden"  class="input-normal control-text possessionsNo" id="possessionsNo">
+                        <input name="possessionsName" type="hidden"  class="input-normal control-text possessionsName" id="possessionsName">
+                        <!-- <input name="posNo" type="hidden"  class="input-normal control-text posNo" id="posNo">
+                        <input name="posName" type="hidden"  class="input-normal control-text posName" id="posName"> -->
+                    </div>
+                </div>
+                <!-- <div class="control-group span8">
+                    <label class="control-label">涉案财物名称</label>
+                    <div class="controls">
+                        <input name="possessionsName" type="grade"  class="input-normal control-text possessionsName" readonly="readonly">
+                    </div>
+                </div> -->
+            </div>
+            <!-- <div class="row">
+            	<div class="control-group span8">
+            		<label class="control-label">涉案财物编号</label>
+	            	<div class="controls">
+	            		
+	            	</div>
+            	</div>
+            </div> -->
+            
+            <div class="row detail-row">
+                <div class="span8 offset3" id="possessionsNameList">
+                	
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="control-group span15" style="height: 200px;">
+                    <label class="control-label">简要案件</label>
+                    <div class="controls control-row4">
+                        <textarea name="caseExplain" class="input-large caseExplain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--<hr style="border:1px dotted #036" />-->
+            <!--<div class="row">-->
+                <!--<div class="control-group span8">-->
+                    <!--<label class="control-label">借出使用人</label>-->
+                    <!--<div class="controls">-->
+                        <!--<input name="record_use" type="grade" class="input-normal control-text record_use">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+                <!--<div class="control-group span15">-->
+                    <!--<label class="control-label">借出使用说明</label>-->
+                    <!--<div class="controls control-row4">-->
+                        <!--<textarea name="record_explain" class="input-large record_explain" type="text"></textarea>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div id="suspectdiv" style="display: none;">
+                <div class="row suspect" >
+                    <input type="hidden" name="id" />
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人1姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <input type="hidden" name="id" />
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人2姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <input type="hidden" name="id" />
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人3姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <input type="hidden" name="id" />
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人4姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <input type="hidden" name="id" />
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人5姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+    function showTime(){
+        var caseTime = {
+            elem: '#caseTime',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+                endTime.min = datas; //开始日选好后，重置结束日的最小日期
+                endTime.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+        var startTime = {
+            elem: '#startTime',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+
+            }
+        };
+        var endTime = {
+            elem: '#endTime',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+                caseTime.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        laydate(caseTime);
+        laydate(startTime);
+        laydate(endTime);
+    }
+    showTime();
+
+    $(function(){
+        var url_param = location.href;
+        var caseId = url_param.substr(url_param.lastIndexOf("=")+1);
+        if (null != caseId && "" != caseId) {
+            $.ajax({
+                type: "GET",
+                url: url_server + "/erp/case/findById?id="+caseId,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 200) {
+                        $(".caseId").val(data.caseDto.caseId);
+                        $(".caseNo").val(data.caseDto.caseNo);
+                        $(".caseName").val(data.caseDto.caseName);
+                        $(".policeLoginName").val(data.caseDto.policeLoginName);
+                        $(".policeName").val(data.caseDto.policeName);
+                        
+                        $(".possessionsNo").val(data.caseDto.possessionsNo);
+                        $(".possessionsName").val(data.caseDto.possessionsName);
+                        var possessionsNo = $(".possessionsNo").val();
+                        var possessionsName = $(".possessionsName").val();
+                        var posNames = possessionsName.split(";");
+                    	var posNos = possessionsNo.split(";");
+                    	var html = "";
+                    	for (var i = 0 ;i < posNames.length ; i ++ ) {
+                    		if (posNames[i] != "") {
+                    			html = html + "<p>"+ posNos[i] +" &nbsp;&nbsp;"+ posNames[i] +"<a onclick=\"delName("+posNames[i]+";"+ posNos[i]+")\">&nbsp;</a></p>";	
+                    		}
+                    	}
+                        $("#possessionsNameList").html(html);
+                        $(".caseAddress").val(data.caseDto.caseAddress);
+                        $(".caseStatus").val(data.caseDto.caseStatus);
+                        $(".fileStatus").val(data.caseDto.fileStatus);
+                        $(".style").val(data.caseDto.style);
+                        $(".caseTime").val(data.caseDto.caseTime);
+                        $(".startTime").val(data.caseDto.startTime);
+                        $(".caseExplain").val(data.caseDto.caseExplain);
+                        $(".endTime").val(data.caseDto.endTime);
+
+                        if (data.caseDto.style == 2) {
+                            $("#suspectdiv").css("display","block");
+                            var susp = data.caseDto.suspectDtoList;
+                            var inplen = document.getElementById("suspectdiv").getElementsByTagName("input").length;
+                            for (var j = 0;j<susp.length;j++){
+                                document.getElementById("suspectdiv").getElementsByTagName("input")[j*5].value = susp[j].id;
+                                document.getElementById("suspectdiv").getElementsByTagName("input")[j*5+1].value = susp[j].suspectName;
+                                document.getElementById("suspectdiv").getElementsByTagName("input")[j*5+2].value = susp[j].mobileNo;
+                                document.getElementById("suspectdiv").getElementsByTagName("input")[j*5+3].value = susp[j].identity;
+                                document.getElementById("suspectdiv").getElementsByTagName("input")[j*5+4].value = susp[j].remarks;
+                            }
+
+
+                        }
+
+                    } else if (data.code == 100) {
+                        BUI.Message.Alert("此条案件已经不存在!!");
+                    } else {
+                        BUI.Message.Alert("操作失败,请返回重试!!");
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        }
+
+        $(".button-primary").click(function(){
+            var caseDtos = {
+                "caseId": $(".caseId").val(),
+                "caseNo": $(".caseNo").val(),
+                "caseName": $(".caseName").val(),
+                "policeLoginName": $(".policeLoginName").val(),
+                "policeName": $(".policeName").val(),
+                "possessionsNo": $(".possessionsNo").val(),
+                "possessionsName": $(".possessionsName").val(),
+                "caseAddress": $(".caseAddress").val(),
+                "caseStatus": $(".caseStatus").val(),
+                "fileStatus": $(".fileStatus").val(),
+                "style": $(".style").val(),
+                "caseTime": $(".caseTime").val(),
+                "startTime": $(".startTime").val(),
+                "endTime": $(".endTime").val(),
+                "caseExplain": $(".caseExplain").val(),
+                "record_use": $(".record_use").val(),
+                "record_explain": $(".record_explain").val(),
+                "suspectDtoList" : [
+                    {
+                        id:document.getElementById("suspectdiv").getElementsByTagName("input")[0].value,
+                        suspectName:document.getElementById("suspectdiv").getElementsByTagName("input")[1].value,
+                        mobileNo:document.getElementById("suspectdiv").getElementsByTagName("input")[2].value,
+                        identity:document.getElementById("suspectdiv").getElementsByTagName("input")[3].value,
+                        remarks:document.getElementById("suspectdiv").getElementsByTagName("input")[4].value
+                    },{
+                        id:document.getElementById("suspectdiv").getElementsByTagName("input")[5].value,
+                        suspectName:document.getElementById("suspectdiv").getElementsByTagName("input")[6].value,
+                        mobileNo:document.getElementById("suspectdiv").getElementsByTagName("input")[7].value,
+                        identity:document.getElementById("suspectdiv").getElementsByTagName("input")[8].value,
+                        remarks:document.getElementById("suspectdiv").getElementsByTagName("input")[9].value
+                    },{
+                        id:document.getElementById("suspectdiv").getElementsByTagName("input")[10].value,
+                        suspectName:document.getElementById("suspectdiv").getElementsByTagName("input")[11].value,
+                        mobileNo:document.getElementById("suspectdiv").getElementsByTagName("input")[12].value,
+                        identity:document.getElementById("suspectdiv").getElementsByTagName("input")[13].value,
+                        remarks:document.getElementById("suspectdiv").getElementsByTagName("input")[14].value
+                    },{
+                        id:document.getElementById("suspectdiv").getElementsByTagName("input")[15].value,
+                        suspectName:document.getElementById("suspectdiv").getElementsByTagName("input")[16].value,
+                        mobileNo:document.getElementById("suspectdiv").getElementsByTagName("input")[17].value,
+                        identity:document.getElementById("suspectdiv").getElementsByTagName("input")[18].value,
+                        remarks:document.getElementById("suspectdiv").getElementsByTagName("input")[19].value
+                    },{
+                        id:document.getElementById("suspectdiv").getElementsByTagName("input")[20].value,
+                        suspectName:document.getElementById("suspectdiv").getElementsByTagName("input")[21].value,
+                        mobileNo:document.getElementById("suspectdiv").getElementsByTagName("input")[22].value,
+                        identity:document.getElementById("suspectdiv").getElementsByTagName("input")[23].value,
+                        remarks:document.getElementById("suspectdiv").getElementsByTagName("input")[24].value
+                    }
+                ]
+            };
+            $.ajax({
+                type: "POST",
+                url: url_server + "/erp/case/updateCase",
+                data: JSON.stringify(caseDtos),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 5001) {
+                        BUI.Message.Alert('二维码生成失败,请联系管理员！');
+                    } else if(data.code == 200) {
+                        location.href = "success.html"
+                    } else if (data.code == 100) {
+                        BUI.Message.Alert("此条案件信息已经不存在!!");
+                    } else if (data.code == 201) {
+                        BUI.Message.Alert("提交失败!!");
+                    } else {
+                        alert('用户登录超时!!请退出重新登录');
+                        parent.location = url_server + "/erp/html/html/login.html";
+                    }
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        });
+        $(".style").change(function(){
+            if ($(".style").val() == 2) {
+                $("#suspectdiv").css("display","block");
+            } else  {
+                $("#suspectdiv").css("display","none");
+            }
+        });
+        $(".policeName").click(function(){
+            window.open ('../page/user/userDetail.html','newwindow','height=500,width=600,top=200,left=200,toolbar=no,menubar=no,scrollbars=yes,location=no,status=no,alwaysRaised=yes,resizable=no')
+        });
+        $(".possessionsList").click(function(){
+            window.open ('../page/Possessions/linkPossessionsList.html','newwindow','height=500,width=600,top=200,left=200,toolbar=no,menubar=no,scrollbars=yes,location=no,status=no,alwaysRaised=yes,resizable=no')
+        });
+    })
+    
+
+</script>
+</body>
+</html>

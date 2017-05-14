@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>督案单列表</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../assets/util.js"></script>
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="searchForm" class="form-horizontal span24">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">督案单编号：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="caselistNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">案件编号：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="caseNo">
+                    </div>
+                </div>
+                <div class="span3 offset2">
+                    <button  type="button" id="btnSearch" class="button button-primary">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="search-grid-container">
+        <div id="grid"></div>
+    </div>
+
+</div>
+<div id="content" class="hide">
+    <form id="J_Form" class="form-horizontal" action="#">
+        <input type="hidden" name="id" value="">
+        <div class="row">
+            <div class="control-group span8">
+                <label class="control-label"><s>*</s>督案单编号</label>
+                <div class="controls">
+                    <input name="caselistNo" type="grade" data-rules="{required:true}" class="input-normal control-text caselistNo">
+                </div>
+            </div>
+            <div class="control-group span8">
+                <label class="control-label"><s>*</s>案件编号</label>
+                <div class="controls">
+                    <input name="caseNo" type="text" data-rules="{required:true}" class="input-normal control-text caseNo">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group span8">
+                <label class="control-label"><s>*</s>办案民警</label>
+                <div class="controls">
+                    <input name="policeName" type="grade" data-rules="{required:true}" class="input-normal control-text policeName" readonly="readonly">
+                </div>
+            </div>
+            <div class="control-group span8">
+                <label class="control-label"><s>*</s>查证时间</label>
+                <div class="controls">
+                    <input name="caseendTime" type="text" data-rules="{required:true}" class="calendar">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group span15">
+                <label class="control-label">执法建议</label>
+                <div class="controls control-row4">
+                    <textarea name="suggest" class="input-large" type="text"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+
+    BUI.use('common/search',function (Search) {
+        var enumobj = {"1":"正在审核","2":"正在执行","3":"已完成","4":"未完成","5":"驳回"};
+        editing = new BUI.Grid.Plugins.DialogEditing({
+            contentId : 'content', //设置隐藏的Dialog内容
+            autoSave : true, //添加数据或者修改数据时，自动保存
+            triggerCls : 'btn-edit'
+        }),
+        columns = [
+//            {title:'督案单Id',dataIndex:'id',width:100},
+            {title:'督案单编号',dataIndex:'caselistNo',width:120,renderer:function(value,obj){
+                return Search.createLink({
+                    id : 'detail' + value,
+                    title : '督案单详情',
+                    text : value,
+                    href : '../page/CaseListDetail.html?id=' + obj.id
+                });
+            }},
+//            {title:'督案单编号',dataIndex:'caselistNo',width:80},
+            {title:'案件编号',dataIndex:'caseNo',width:80},
+//            {title:'办案民警',dataIndex:'policeName'},
+            {title:'查证时间',dataIndex:'caseendTime',width:100,renderer:BUI.Grid.Format.datetimeRenderer},
+            {title:'案件状态',dataIndex:'state',width:100,renderer:BUI.Grid.Format.enumRenderer(enumobj)},
+//            {title:'执法建议',dataIndex:'suggest',width:500},
+            {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
+
+                var editStr1 ="";
+                if (obj.state == 2) {
+                    editStr1 = '<span class="grid-command" onclick="caselistOk('+obj.id+');" title="完成">完成</span>';
+                }
+                return editStr1 ;
+            }}
+        ],
+
+        store = Search.createStore(url_server + '/erp/caselist/myCaseList',{
+            proxy : {
+                save : { //也可以是一个字符串，那么增删改，都会往那么路径提交数据，同时附加参数saveType
+                    addUrl : url_server + '/erp/caselist/insert',
+                    updateUrl : url_server + '/erp/caselist/update',
+                    removeUrl : url_server +  '/erp/caselist/delete'
+                }/*,
+                 method : 'POST'*/
+            },
+            autoSync : true//保存数据后，自动更新
+
+        }),
+        gridCfg = Search.createGridCfg(columns,{
+//            tbar : {
+//                items : [
+//                    {text : '<i class="icon-plus"></i>新建',btnCls : 'button button-small',handler:addFunction}
+//                ]
+//            },
+//            plugins : [editing,BUI.Grid.Plugins.CheckSelection,BUI.Grid.Plugins.AutoFit] // 插件形式引入多选表格
+        });
+
+        var  search = new Search({
+            store : store,
+            gridCfg : gridCfg
+        }),
+        grid = search.get('grid');
+
+        function addFunction(){
+            var newData = {isNew : true}; //标志是新增加的记录
+            editing.add(newData,'name'); //添加记录后，直接编辑
+        }
+
+
+        //删除操作
+        function delFunction(){
+            var selections = grid.getSelection();
+            delItems(selections);
+        }
+
+        function delItems(items){
+            var ids = [];
+            BUI.each(items,function(item){
+            	ids.push(item.caseId);
+            });
+
+            if(ids.length){
+                BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+                    store.save('remove',{fid : ids});
+                },'question');
+            }
+        }
+
+        //监听事件，删除一条记录
+        grid.on('cellclick',function(ev){
+            var sender = $(ev.domTarget); //点击的Dom
+            if(sender.hasClass('btn-del')){
+                var record = ev.record;
+                delItems([record]);
+            }
+        });
+    });
+
+    $(function(){
+        //获取办案民警
+        $(".caseNo").blur(function(){
+            var casedto = {
+                "caseNo": $(".caseNo").val()
+            };
+            if ($(".caseNo").val() != null && $(".caseNo").val() != "" ) {
+                $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/findByNo",
+                    data: JSON.stringify(casedto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.data == null) {
+                            alert("案件不存在");
+                            $(".caseNo").val("");
+                            $(".policeName").val("");
+                        } else {
+                            $(".policeName").val(data.data);
+                        }
+                    },
+                    error: function () {
+                        alert("获取民警失败");
+                        $(".policeName").val("");
+                    }
+                });
+            }
+        });
+
+
+//        $(".caselistNo").blur(function(){
+//            var caselistdto = {
+//                "caselistNo": $(".caselistNo").val()
+//            };
+//            if ($(".caselistNo").val() != null && $(".caselistNo").val() != "" ) {
+//                $.ajax({
+//                    type: "POST",
+//                    url: url_server + "/erp/case/findByNo",
+//                    data: JSON.stringify(casedto),
+//                    contentType: "application/json",
+//                    dataType: "json",
+//                    success: function (data) {
+//                        if (data.data == null) {
+//                            alert("案件不存在");
+//                            $(".caseNo").val("");
+//                            $(".policeName").val("");
+//                        } else {
+//                            $(".policeName").val(data.data);
+//                        }
+//                    },
+//                    error: function () {
+//                        alert("获取民警失败");
+//                        $(".policeName").val("");
+//                    }
+//                });
+//            }
+//        });
+    })
+
+    function caselistOk(id) {
+        BUI.Message.Confirm('确认要完成了么？',function(){
+            if (id != null && id != "" && id != "undefined" ) {
+                $.ajax({
+                    type: "get",
+                    url: url_server + "/erp/caselist/caselistOk?id=" + id,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 304) {
+                            BUI.Message.Alert("登录超时,请重新登录!!");
+                        } else if (data.code == 100) {
+                            BUI.Message.Alert("督案单不存在!!");
+                        } else if (data.code == 200) {
+                            BUI.Message.Alert("审核成功!!");
+                        } else {
+                            BUI.Message.Alert("操作失败!!");
+                        }
+                    },
+                    error: function () {
+                        alert("请求失败");
+                    }
+                });
+            }
+        },'question');
+    }
+
+</script>
+
+</body>
+</html>

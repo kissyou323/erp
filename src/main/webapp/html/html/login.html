@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+    <link href="../assets/css/base.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/img/icon.jpg" media="screen" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: url(../assets/img/m_bg.gif);
+        }
+
+        .wrapper_login .cont {
+            width: 1000px;
+            height: 800px;
+            margin: 0 auto;
+            background: url(../assets/img/login_bg.gif) no-repeat;
+        }
+
+        #login {
+            width: 1000px;
+            height: 100%;
+            min-height: 700px;
+            margin: 0 auto;
+            background: url(../assets/img/login_bg.gif) no-repeat;
+        }
+
+        #login h1 {
+            margin: 257px 0 0 279px;
+            width: 440px;
+            height: 39px;
+            font: 600 14px/39px "宋体";
+            text-align: center;
+            display: inline-block;
+            color: #fff;
+        }
+
+        #login .logink {
+            float: left;
+            margin: 18px 0 0 436px;
+            _margin-left: 216px;
+            width: 274px;
+            height: 166px;
+            text-align: left;
+            padding-top: 20px;
+        }
+
+        #login .logink li {
+            margin: 5px 0;
+            float: left;
+            width: 100%;
+        }
+
+        #login .logink li label {
+            width: 48px;
+            height: 26px;
+            line-height: 26px;
+            display: inline-block;
+            text-align: right;
+            color: #333;
+            float: left;
+        }
+
+        #login .logink li input.text {
+            height: 24px;
+            width: 176px;
+            border: 1px solid #c6def3;
+            margin-left: 4px;
+            vertical-align: middle;
+            line-height: 24px;
+            background: #e3f2ff;
+            padding-left: 6px;
+        }
+
+        .btn_dl {
+            border: none;
+            margin-left: 54px;
+            width: 78px;
+            height: 29px;
+            background: url(../assets/img/btn03.gif) no-repeat;
+            font: 100 14px/29px "宋体";
+            text-align: center;
+            display: inline-block;
+            color: #fff;
+        }
+
+        #login .login-mian .tip {
+            display: none;
+            color: red;
+            width: 176px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<div id="login">
+    <h1 id="title"></h1>
+    <div class="login-mian">
+        <ul class="logink">
+            <li><label>用户名：</label>
+                <input id="name" name="username" class="text">
+            </li>
+            <li><label>密码：</label> <input id="password" name="password" class="text" type="password"
+                                          value=""></li>
+            <li><input class="btn_dl login-btn" type="button" accesskey="l" value="登录" ></li>
+            <li><label></label><div class="tip"></div></li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript">
+    document.title= erp_title;
+    document.getElementById("title").innerHTML = erp_title;
+    $(function () {
+        $(".login-btn").click(function () {
+            var name = $("#name").val();
+            var passWord = $("#password").val();
+            var validRes = validUser(name, passWord);
+            var user = {
+                "loginName": name,
+                "password": passWord
+            };
+
+            if (validRes) {
+//                localStorage.setItem("roleid","3");
+//                window.location.href = web_host + "/CMS/index.html";
+                $.ajax({
+                    url: url_server + "/erp/user/login",
+                    dataType: "json",
+                    type: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(user),
+                    success: function (result) {
+                        if (result.code == 200) {
+                            localStorage.setItem("roleid",result.data.roleid);
+                            localStorage.setItem("userName",result.data.userName);
+                            localStorage.setItem("login_user", result.data.userName);
+                            if (result.data.roleid == 1) {
+                                window.location.href = "home.html"
+                            } else if (result.data.roleid == 3) {//所内领导
+                                window.location.href = "manger.html"
+                            } else if (result.data.roleid == 2) {//管理员
+                                window.location.href = "index.html"
+                            }
+
+                        }else if(result.code == 304) {
+                            $(".tip").css({"display": "block"}).text("该用户已锁定");
+                            setTimeout(function () {
+                                $(".tip").css({"display": "block"}).text("");
+                            }, 2000);
+                        }else if(result.code == 440) {
+                            $(".tip").css({"display": "block"}).text(result.msg);
+                            setTimeout(function () {
+                                $(".tip").css({"display": "block"}).text("");
+                            }, 2000);
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("登录失败!");
+                    }
+                });
+            }
+        });
+        function validUser(name, passWord) {
+            if (name == "" && passWord == "") {
+                $(".tip").css({"display": "block"}).text("请输入用户名或密码");
+                setTimeout(function () {
+                    $(".tip").css({"display": "block"}).text("");
+                }, 2000);
+                return false;
+            } else if (name == "") {
+                $(".tip").css({"display": "block"}).text("请输入用户名");
+                setTimeout(function () {
+                    $(".tip").css({"display": "block"}).text("");
+                }, 2000);
+                return false;
+            } else if (passWord == "") {
+                $(".tip").css({"display": "block"}).text("请输入密码");
+                setTimeout(function () {
+                    $(".tip").css({"display": "block"}).text("");
+                }, 2000);
+                return false;
+            } else {
+                return true;
+            }
+        }
+    });
+</script>
+</body>
+</html>

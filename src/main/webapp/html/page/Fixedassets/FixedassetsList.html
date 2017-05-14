@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>固定资产</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="searchForm" class="form-horizontal">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">产品编号：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="assetsNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">产品名称：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="assetsName">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">型号|规格：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="style">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">使用部门：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="useDepartment">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">使用人：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="usePerson">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">状态：</label>
+                    <div class="controls">
+                        <select name="status" class="control-text">
+                        	<option value="0">未选择</option>
+                            <option value="1">库存</option>
+                            <option value="2">完好</option>
+                            <option value="3">借出</option>
+                            <option value="4">报废</option>
+                            <option value="5">维修检验</option>
+                            <option value="6">未入库</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span12">
+                    <label class="control-label">入库时间：</label>
+                    <div class="controls">
+                        <input name="startTime" id="start" class="laydate-icon" />
+                        <input name="endTime" id="end"  class="laydate-icon" />
+                    </div>
+                </div>
+                <div class="span3 offset1">
+                    <button  type="button" id="btnSearch" class="button button-primary">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="search-grid-container">
+        <div id="grid"></div>
+    </div>
+
+</div>
+<script type="text/javascript" src="../../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../../assets/json2.js"></script>
+<script type="text/javascript" src="../../assets/localStorage.js"></script>
+<script type="text/javascript" src="../../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../../assets/laydate.js"></script>
+<script type="text/javascript" src="../../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../../assets/util.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+
+    function showTime(){
+        var start = {
+            elem: '#start',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+        var end = {
+            elem: '#end',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00',
+            max: '2099-06-16 23:59:59',
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        laydate(start);
+        laydate(end);
+    }
+    showTime();
+
+    BUI.use('common/search',function (Search) {
+
+        var enumObj = {"1":"库存","2":"完好","3":"借出","4":"报废","5":"维修检验","6":"未入库"},
+        columns = [
+            //v代表着改字段自己如下面就是代表着assetsNo的值,obj代表着整个Fixedassets对象
+            {title:'资产编号',dataIndex:'assetsNo',width:120,renderer:function(value,obj){
+                return Search.createLink({
+                    id : 'detail' + value,
+                    title : obj.assetsName + '详情',
+                    text : value,
+                    href : '../page/Fixedassets/FixedassetsDetail.html?assetsId=' + obj.assetsId
+                });
+            }},
+            {title:'资产名称',dataIndex:'assetsName',width:150},
+            {title:'型号/规格',dataIndex:'style',width:120},
+            {title:'保管员',dataIndex:'keeper',width:80},
+            {title:'入库时间',dataIndex:'startTime',width:180,renderer:BUI.Grid.Format.datetimeRenderer},
+            {title:'使用部门',dataIndex:'useDepartment'},
+            {title:'使用人',dataIndex:'use_person'},
+            {title:'状态',dataIndex:'status',width:300,width:60,renderer:BUI.Grid.Format.enumRenderer(enumObj)},
+            {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
+                var editStr = "";
+                if (obj.status == 1 || obj.status == 2 || obj.status == 6) {
+                	editStr =  Search.createLink({ //链接使用 此方式
+                        id : 'editId' + obj.assetsId,
+                        title : '编辑资产信息',
+                        text : '修改',
+                        href : '../page/Fixedassets/FixedassetsEdit.html?assetsId=' + obj.assetsId
+                    });
+                } else {
+                	editStr = '<span class="grid-command" onclick="updateStatus();" title="修改">修改</span>';
+                }
+                var prientStr  =  Search.createLink({ //链接使用 此方式
+                     id : 'printId' + obj.assetsId,
+                     title : '打印',
+                     text : '打印',
+                     href : '../page/qrcodePrint.html?assetsNo=' + obj.assetsNo
+                 });
+                 var delStr = '<span class="grid-command btn-del" title="删除信息">删除</span>';
+                return editStr + prientStr + delStr;
+            }}
+        ],
+
+        store = Search.createStore(url_server + '/erp/fixedassets/fixedassetList'),
+        gridCfg = Search.createGridCfg(columns,{
+//            tbar : {
+//                items : [
+//                    {text : '<i class="icon-plus"></i>新建',btnCls : 'button button-small',handler:addFunction}
+//                ]
+//            },
+        });
+
+        var  search = new Search({
+            store : store,
+            gridCfg : gridCfg
+        }),
+        grid = search.get('grid');
+
+        //删除操作
+        function delFunction(){
+            var selections = grid.getSelection();
+            delItems(selections);
+        }
+
+        function delItems(items){
+            var ids = [];
+            BUI.each(items,function(item){
+            	ids.push(item.assetsId);
+            });
+
+            if(ids.length){
+                BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+                    $.ajax({
+                        url : url_server +  '/erp/fixedassets/remove?id=' + ids,
+                        dataType : 'json',
+                        data : {ids : ids},
+                        success : function(data){
+                            if(data.code == 200){ //删除成功
+                                search.load();
+                            } else if(data.code == 302){ //删除失败
+                                alert("登录超时.请重新登录!");
+                                parent.location = url_server + "/erp/html/html/login.html";
+                            } else { //删除失败
+                                BUI.Message.Alert('删除失败！');
+                            }
+                        }
+                    });
+                },'question');
+            }
+        }
+
+        //监听事件，删除一条记录
+        grid.on('cellclick',function(ev){
+            var sender = $(ev.domTarget); //点击的Dom
+            if(sender.hasClass('btn-del')){
+                var record = ev.record;
+                delItems([record]);
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

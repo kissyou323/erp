@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>涉案财物列表</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="searchForm" class="form-horizontal">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物编号：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="possessionsNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物名称：</label>
+                    <div class="controls">
+                        <input type="text" class="control-text" name="possessionsName">
+                    </div>
+                </div>
+                <div class="span3 offset2">
+                    <button  type="button" id="btnSearch" class="button button-primary">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="search-grid-container">
+        <div id="grid"></div>
+    </div>
+
+</div>
+<script type="text/javascript" src="../../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../../assets/laydate.js"></script>
+<script type="text/javascript" src="../../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../../assets/util.js"></script>
+<script type="text/javascript" src="../../assets/json2.js"></script>
+<script type="text/javascript" src="../../assets/localStorage.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+
+<script type="text/javascript">
+
+    BUI.use('common/search',function (Search) {
+
+        var enumObj = {"1":"库存","2":"持有人领回","3":"借出","6":"未入库"},
+	        editing = new BUI.Grid.Plugins.DialogEditing({
+	            contentId : 'content', //设置隐藏的Dialog内容
+	            autoSave : true, //添加数据或者修改数据时，自动保存
+	            triggerCls : 'btn-edit'
+	        }),
+            columns = [
+                {title:'涉案财物编号',dataIndex:'possessionsNo',width:120},
+                {title:'涉案财物名称',dataIndex:'possessionsName',width:150}
+            ],
+
+            store = Search.createStore(url_server + '/erp/possessions/searchList',{
+                proxy : {
+                    save : { //也可以是一个字符串，那么增删改，都会往那么路径提交数据，同时附加参数saveType
+                        addUrl : url_server + '/erp/possessions/save',
+                        updateUrl : url_server + '/erp/possessions/update',
+                        removeUrl : url_server +  '/erp/possessions/delete'
+                    }/*,
+                     method : 'POST'*/
+                },
+                autoSync : true //保存数据后，自动更新
+            }),
+            gridCfg = Search.createGridCfg(columns,{
+                   tbar : {
+                        items : [
+                            {text : '<i class="icon-plus"></i>确认',btnCls : 'button button-small',handler:addFunction}
+                        ]
+                    }, 
+                    plugins : [editing,BUI.Grid.Plugins.CheckSelection,BUI.Grid.Plugins.AutoFit] // 插件形式引入多选表格
+            });
+
+        var  search = new Search({
+            store : store,
+            gridCfg : gridCfg
+        }),
+        grid = search.get('grid');
+
+        //确认
+        function addFunction(){
+        	var possessionsNos = "";
+        	var possessionsNames = "";
+        	var selections = grid.getSelection();
+        	BUI.each(selections,function(item){
+        		possessionsNos = possessionsNos + item.possessionsNo + ";";
+        		possessionsNames = possessionsNames + item.possessionsName + ";";
+            });
+        	var possessionsNo = window.opener.document.getElementById('possessionsNo').value;
+        	var possessionsName = window.opener.document.getElementById('possessionsName').value;
+        	if (possessionsNo == "") {
+        		window.opener.document.getElementById('possessionsNo').value = possessionsNos;
+        	} else {
+        		var posNo = possessionsNo.split(";");//輸入框中的
+        		var posNos = possessionsNos.split(";");//新增的
+        		for (var i = 0; i < posNos.length; i++) {
+        			if (posNos[i] != "") {
+        				var flag = 0;
+        				for (var j = 0; j < posNo.length;j++) {
+        					if (posNo[j] != "") {
+        						if (posNos[i] == posNo[j]) {
+        							flag = 1;
+        						}
+        					}	
+        				} 
+        				if (flag == 0) {
+        					possessionsNo = possessionsNo + posNos[i] + ";";	
+        				}
+        			}
+        		}
+        		window.opener.document.getElementById('possessionsNo').value = possessionsNo;
+        	}
+        	if (possessionsName == "") {
+        		window.opener.document.getElementById('possessionsName').value = possessionsNames;
+        	} else {
+        		var posName = possessionsName.split(";");//輸入框中的
+        		var posNames = possessionsNames.split(";");//新增的
+        		for (var i = 0; i < posNames.length; i++) {
+        			if (posNames[i] != "") {
+        				var flag = 0;
+        				for (var j = 0; j < posName.length;j++) {
+        					if (posName[j] != "") {
+        						if (posNames[i] == posName[j]) {
+        							flag = 1;
+        						}
+        					}	
+        				} 
+        				if (flag == 0) {
+        					possessionsName = possessionsName + posNames[i] + ";";	
+        				}
+        			}
+        		}
+        		window.opener.document.getElementById('possessionsName').value = possessionsName;
+        	}
+        	
+        	var html = "";
+        	var possessionsNos = window.opener.document.getElementById('possessionsNo').value;
+        	var possessionsNames = window.opener.document.getElementById('possessionsName').value;
+        	var posNames = possessionsNames.split(";");
+        	var posNos = possessionsNos.split(";");
+        	for (var i = 0 ;i < posNames.length ; i ++ ) {
+        		if (posNames[i] != "") {
+        			html = html + "<p>"+ posNos[i] +" &nbsp;&nbsp;"+ posNames[i] +"<a onclick=\"delName("+posNames[i]+";"+ posNos[i]+")\">&nbsp;</a></p>";	
+        		}
+        	}
+        	window.opener.document.getElementById('possessionsNameList').innerHTML  = html;
+        	
+/*         	window.opener.document.getElementById('posNo').value= possessionsNos;
+        	window.opener.document.getElementById('posName').value= possessionsNames;
+ */        	window.close();
+        	
+        }
+
+        //删除操作
+        function delFunction(){
+            var selections = grid.getSelection();
+            delItems(selections);
+        }
+
+        function delItems(items){
+            var ids = [];
+            BUI.each(items,function(item){
+                ids.push(item.possessionsId);
+            });
+
+            if(ids.length){
+                BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+                    store.save('remove',{fid : ids});
+                },'question');
+            }
+        }
+
+        //监听事件，删除一条记录
+        grid.on('cellclick',function(ev){
+            var sender = $(ev.domTarget); //点击的Dom
+            if(sender.hasClass('btn-del')){
+                var record = ev.record;
+                delItems([record]);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

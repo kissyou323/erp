@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>串并案件详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />   <!-- 下面的样式，仅是为了显示代码，而不应该在项目中使用-->
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/img/icon.jpg" media="screen" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="detail-page">
+        <h2>确认案件串并</h2>
+        <div class="detail-section">
+        	<h4>主案件</h4>
+            <div class="row detail-row">
+                <div class="span5">
+                    <label>案件编号：</label><span class="detail-text z-caseNo"></span>
+                </div>
+                <div class="span5">
+                    <label>案件名称：</label><span class="detail-text z-caseName"></span>
+                </div>
+                <div class="span5">
+                    <label>案卷状态：</label><span class="detail-text z-caseStatus"></span>
+                </div>
+            </div>
+            <h4>子案件</h4>
+            <div class="row detail-row son-case">
+                
+            </div>
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">串并</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    var url_param = location.href;
+    var ids = url_param.substr(url_param.lastIndexOf("=")+1);
+    if (null != ids && "" != ids) {
+        $.ajax({
+            type: "GET",
+            url: url_server + "/erp/case/findCaseByNo?ids[]="+ids,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+            	var list = data.data;
+            	var html = "";
+            	for (var i = 0;i<list.length;i++) {
+            		if (list[i].caseStatus == 4) {
+            			$(".z-caseNo").html(list[i].caseNo);
+            			$(".z-caseName").html(list[i].caseName);
+            			$(".z-caseStatus").html(caseStatus(isStrNull(list[i].caseStatus)));
+            		} else {
+            			html = html + "<div class=\"span5\">";
+                		html = html + "<label>案件编号：</label><span class=\"detail-text caseNo\">"+list[i].caseNo+"</span>";
+                		html = html + "</div>";
+                		
+                		html = html + "<div class=\"span5\">";
+                		html = html + "<label>案件名称：</label><span class=\"detail-text caseName\">"+list[i].caseName+"</span>";
+                		html = html + "</div>";
+                		
+                		html = html + "<div class=\"span5\">";
+                		html = html + "<label>案卷状态：</label><span class=\"detail-text caseStatus\">"+caseStatus(isStrNull(list[i].caseStatus))+"</span>";
+                		html = html + "</div>";
+            		}
+            	}
+            	$(".son-case").html(html);
+            },
+            error: function () {
+                alert("失败");
+            }
+        });
+    } else {
+        alert("案件已不存在,请刷新后重试!!");
+        window.close();
+    }
+    
+    $(function(){
+    	$(".button-primary").click(function(){
+            if (ids != ""){
+            	var strs = new Array()
+            	strs = ids.split(",");
+                var caseDto = {
+                    "caseNos" : strs
+                };
+                 $.ajax({
+                    type: "POST",
+                    url: url_server + "/erp/case/merge",
+                    data:  JSON.stringify(caseDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 102) {
+                            BUI.Message.Alert('合并案件中不允许存在两笔已合并案件(主案件)');
+                        } else if(data.code == 103) {
+                            BUI.Message.Alert('串并的案件中存在不合法的案件,请刷新后重试');
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('请求异常,异常代码为201！');
+                        }else if(data.code == 200) {
+                            alert("串并成功");
+                            window.opener.location.href=window.opener.location.href;
+                            window.close();
+                        } else {
+                            BUI.Message.Alert('用户登录超时!!请重新登录');
+                        }
+                    },
+                    error: function () {
+                        alert("请求失败");
+                    }
+                });
+            } else {
+                BUI.Message.Alert('串并主案件的编号必须是子案件中的任意一个');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

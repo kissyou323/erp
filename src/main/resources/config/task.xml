@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans">
+	<bean class="com.erp.task.AuthIdentityTask" id="identityTask" />
+	<bean class="com.erp.task.CaseListTask" id="caseListTask" />
+	<!-- spring任务调度 -->
+	<task:scheduled-tasks>
+		<task:scheduled cron="${timer.identity.delay}" method="execute" ref="identityTask" />
+		<task:scheduled cron="${timer.identity.caseList}" method="execute" ref="caseListTask" />
+	</task:scheduled-tasks>
+
+</beans>

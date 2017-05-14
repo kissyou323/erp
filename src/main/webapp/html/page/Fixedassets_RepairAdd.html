@@ -1,0 +1,331 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>添加固定资产</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="repair_id" value="">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>类型：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="style" class="input-normal fe_style">
+                            <option value="1">固定资产</option>
+                            <option value="2">装备</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>资产|装备编号</label>
+                    <div class="controls">
+                        <input name="assets_equipment_no" type="grade" data-rules="{required:true}" class="input-normal control-text assets_equipment_no">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>资产|装备ID</label>
+                    <div class="controls">
+                        <input name="assets_equipment_id" type="grade" data-rules="{required:true}" class="input-normal control-text assets_equipment_id" readonly>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>资产|装备名称</label>
+                    <div class="controls">
+                        <input name="assets_equipment_name" type="grade" data-rules="{required:true}" class="input-normal control-text assets_equipment_name" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>维修人|单位</label>
+                    <div class="controls">
+                        <input name="repair_name" type="grade" data-rules="{required:true}" class="input-normal control-text repair_name">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>联系电话</label>
+                    <div class="controls">
+                        <input name="tel" type="text" data-rules="{required:true}" class="input-normal control-text tel">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>维修时间</label>
+                    <div class="controls">
+                        <!--<input name="repair_time" type="text" data-rules="{required:true}" class="calendar">-->
+                        <input name="startTime" type="text" id="start" class="laydate-icon startTime repair_time" data-rules="{required:true}" />
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>维修结果状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="repair_status" class="input-normal repair_status">
+                            <option value="5">维修中</option>
+                            <option value="1">已维修</option>
+                            <option value="4">已报废</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span15" style="height: 200px;">
+                    <label class="control-label">维修说明</label>
+                    <div class="controls control-row4">
+                        <textarea name="repair_explain" class="input-large repair_explain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function showTime(){
+        var start = {
+            elem: '#start',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+
+            }
+        };
+        laydate(start);
+    }
+    showTime();
+
+    $(function(){
+        $(".assets_equipment_no").focus();
+
+        $(".button-primary").click(function(){
+            if ($(".assets_equipment_id").val() == "" || $(".repair_name").val() == "") {
+                BUI.Message.Alert('产品id和维修单位不能为空');
+            } else {
+                var repairDto = {
+                    "repair_name": $(".repair_name").val(),
+                    "tel": $(".tel").val(),
+                    "repair_explain": $(".repair_explain").val(),
+                    "repair_time": $(".repair_time").val(),
+                    "repair_status": $(".repair_status").val(),
+                    "assets_equipment_id": $(".assets_equipment_id").val(),
+                    "assets_equipment_name": $(".assets_equipment_name").val(),
+                    "style": $(".fe_style").val(),
+                    "assets_equipment_no": $(".assets_equipment_no").val()
+
+                };
+                $.ajax({
+                    type: "POST",
+                    url:  url_server + '/erp/repair/saveAndupdate',
+                    data: JSON.stringify(repairDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.code == 200) {
+                            location.href = "success.html"
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('添加失败,请联系管理员！');
+                        } else {
+                            alert("登录超时.请重新登录!");
+                            parent.location = url_server + "/erp/html/html/login.html";
+                        }
+                    },
+                    error: function () {
+                        alert("操作失败");
+                    }
+                });
+            }
+        });
+
+        $(".assets_equipment_no").change(function(){
+            var fe_style = $(".fe_style").val();
+            var id  = $(".assets_equipment_no").val();
+            var assets_equipment_no = id.substr(0,id.indexOf(";"));
+            if (assets_equipment_no == "") {
+                assets_equipment_no = id;
+            }
+            var fixedassets = {
+                "assetsNo": assets_equipment_no
+            };
+
+            var equipment = {
+                "equipmentNo": assets_equipment_no
+            };
+
+            if (fe_style == 1) {
+                //等于1是固定资产
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/fixedassets/findByNo",
+                        data: JSON.stringify(fixedassets),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".assets_equipment_id").val("");
+                                $(".assets_equipment_name").val("");
+                            } else {
+                                $(".assets_equipment_no").val(data.data.assetsNo);
+                                $(".assets_equipment_id").val(data.data.assetsId);
+                                $(".assets_equipment_name").val(data.data.assetsName);
+                            }
+                        },
+                        error: function () {
+                            alert("固定资产记录不存在");
+                        }
+                    });
+                }
+            } else {
+                //等于2是装备管理
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/equipment/findByNo",
+                        data: JSON.stringify(equipment),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".assets_equipment_id").val("");
+                                $(".assets_equipment_name").val("");
+                            } else {
+                                $(".assets_equipment_no").val(data.data.equipmentNo);
+                                $(".assets_equipment_id").val(data.data.equipmentId);
+                                $(".assets_equipment_name").val(data.data.equipmentName);
+                            }
+
+                        },
+                        error: function () {
+                            alert("装备记录不存在");
+                        }
+                    });
+                }
+            }
+
+        });
+
+        $(".assets_equipment_no").blur(function(){
+            var fe_style = $(".fe_style").val();
+            var id  = $(".assets_equipment_no").val();
+            var assets_equipment_no = id.substr(0,id.indexOf(";"));
+            var fixedassets = {
+                "assetsNo": assets_equipment_no
+            };
+
+            var equipment = {
+                "equipmentNo": assets_equipment_no
+            };
+
+            if (fe_style == 1) {
+                //等于1是固定资产
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/fixedassets/findByNo",
+                        data: JSON.stringify(fixedassets),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".assets_equipment_id").val("");
+                                $(".assets_equipment_name").val("");
+                            } else {
+                                $(".assets_equipment_no").val(data.data.assetsNo);
+                                $(".assets_equipment_id").val(data.data.assetsId);
+                                $(".assets_equipment_name").val(data.data.assetsName);
+                            }
+                        },
+                        error: function () {
+                            alert("固定资产记录不存在");
+                        }
+                    });
+                }
+            } else {
+                //等于2是装备管理
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/equipment/findByNo",
+                        data: JSON.stringify(equipment),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".assets_equipment_id").val("");
+                                $(".assets_equipment_name").val("");
+                            } else {
+                                $(".assets_equipment_no").val(data.data.equipmentNo);
+                                $(".assets_equipment_id").val(data.data.equipmentId);
+                                $(".assets_equipment_name").val(data.data.equipmentName);
+                            }
+
+                        },
+                        error: function () {
+                            alert("装备记录不存在");
+                        }
+                    });
+                }
+            }
+        });
+
+    });
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>歙县徽城派出所ERP管理系统</title>
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/img/icon.jpg" media="screen" />
+    <script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="../assets/util.js"></script>
+</head>
+<body>
+<div class="content">
+    <input type="file" id="fileContent"/>
+    <input type="button" id="buttons" value="上传"/>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $("#buttons").click(function(){
+            var uploadFile = {
+                "file": $("#fileContent").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: url_server + "/erp/uploadFile/upload",
+                data: JSON.stringify(uploadFile),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.data);
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

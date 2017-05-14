@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>添加固定资产</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="recordId" value="">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>类型：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="style" class="input-normal fe_style">
+                            <option value="1">固定资产</option>
+                            <option value="2">装备</option>
+                            <option value="3">案卷</option>
+                            <option value="4">涉案财物</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>编号</label>
+                    <div class="controls">
+                        <input name="recordNo" type="grade" data-rules="{required:true}" class="input-normal control-text recordNo">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+               <!-- <div class="control-group span8">
+                    <label class="control-label"><s>*</s>类型</label>
+                    <div class="controls">
+                        <input name="recordStyle" type="grade" data-rules="{required:true}" class="input-normal control-text recordStyle" readonly>
+                    </div>
+                </div>-->
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>名称</label>
+                    <div class="controls">
+                    	<input type="hidden" class="status_hide" value="" />
+                        <input name="recordName" type="grade" data-rules="{required:true}" class="input-normal control-text recordName" readonly>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="status" class="input-normal status">
+                            <option value="3">借出</option>
+                            <option value="1">还入</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>借出（还入）时间</label>
+                    <div class="controls">
+                        <input name="recordTime" type="grade" data-rules="{required:true}" class="input-normal control-text recordTime" id="start">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>使用人</label>
+                    <div class="controls">
+                        <input name="useDepartment" type="text" data-rules="{required:true}" class="input-normal control-text useDepartment">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="control-group span15" style="height: 200px;">
+                    <label class="control-label">使用说明</label>
+                    <div class="controls control-row4">
+                        <textarea name="useExplain" class="input-large useExplain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function showTime(){
+        var start = {
+            elem: '#start',
+            format: 'YYYY-MM-DD hh:mm:ss',
+            min: '2000-01-01 00:00:00', //设定最小日期为当前日期 laydate.now()
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            choose: function (datas) {
+
+            }
+        };
+        laydate(start);
+    }
+    showTime();
+
+    $(function(){
+        $(".recordNo").focus();
+
+        $(".button-primary").click(function(){
+            if ($(".recordNo").val() == "" || $(".recordName").val() == "") {
+                BUI.Message.Alert('编号和名称不能为空');
+            } else if ($(".status_hide").val() == "3" &&  $(".status").val() == "3") {
+            	BUI.Message.Alert($(".recordName").val() + '已经借出');
+            } else if ($(".status_hide").val() == "1" &&  $(".status").val() == "1") {
+            	BUI.Message.Alert($(".recordName").val() + '已经还入');
+            } else {
+                var recordDto = {
+                    "recordNo": $(".recordNo").val(),
+                    "recordName": $(".recordName").val(),
+                    "status": $(".status").val(),
+                    "recordTime": $(".recordTime").val(),
+                    "useDepartment": $(".useDepartment").val(),
+                    "style": $(".fe_style").val(),
+                    "useExplain": $(".useExplain").val()
+
+                };
+                $.ajax({
+                    type: "POST",
+                    url:  url_server + '/erp/record/save',
+                    data: JSON.stringify(recordDto),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.code == 200) {
+                            location.href = "success.html"
+                        } else if(data.code == 201) {
+                            BUI.Message.Alert('添加失败,请联系管理员！');
+                        } else if(data.code == 100) {
+                            BUI.Message.Alert('该物品不存在了！');
+                        } else if(data.code == 501) {
+                            BUI.Message.Alert('该物品已借出！或者不在库中');
+                        } else {
+                            alert("登录超时.请重新登录!");
+                            parent.location = url_server + "/erp/html/html/login.html";
+                        }
+                    },
+                    error: function () {
+                        alert("操作失败");
+                    }
+                });
+            }
+        });
+        $(".fe_style").change(function(){
+            var fe_style = $(".fe_style").val();
+            var id = $(".recordNo").val();
+            var assets_equipment_no = id.substr(0,id.indexOf(";"));
+            if (assets_equipment_no == "") {
+                assets_equipment_no = id;
+            }
+            var fixedassets = {
+                "assetsNo": assets_equipment_no
+            };
+
+            var equipment = {
+                "equipmentNo": assets_equipment_no
+            };
+
+            var caseDto = {
+                "caseNo" : assets_equipment_no
+            };
+
+            var possessionsDto = {
+                "possessionsNo" : assets_equipment_no
+            };
+
+            if (fe_style == 1) {
+                //等于1是固定资产
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/fixedassets/findByNo",
+                        data: JSON.stringify(fixedassets),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                                $(".recordName").val(data.data.assetsName);
+                                $(".status_hide").val(data.data.status);
+                            }
+                        },
+                        error: function () {
+                            alert("固定资产记录不存在");
+                        }
+                    });
+                }
+            } else if (fe_style == 2) {
+                //等于2是装备管理
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/equipment/findByNo",
+                        data: JSON.stringify(equipment),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                                $(".recordName").val(data.data.equipmentName);
+                                $(".status_hide").val(data.data.status);
+                            }
+
+                        },
+                        error: function () {
+                            alert("装备记录不存在");
+                        }
+                    });
+                }
+            } else if (fe_style == 3){
+                //等于3是案卷
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/case/findByNoAndName",
+                        data: JSON.stringify(caseDto),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                                $(".recordName").val(data.data.caseName);
+                                $(".status_hide").val(data.data.fileStatus);
+                            }
+
+                        },
+                        error: function () {
+                            alert("案卷不存在");
+                        }
+                    });
+                }
+            }else if (fe_style == 4) {
+                //等于4是财物
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/possessions/findByNo",
+                        data: JSON.stringify(possessionsDto),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                                $(".recordName").val(data.data.possessionsName);
+                                $(".status_hide").val(data.data.status);
+                            }
+
+                        },
+                        error: function () {
+                            alert("财物不存在");
+                        }
+                    });
+                }
+            } else {
+                alert("编号不存在");
+            }
+        });
+
+
+
+        $(".recordNo").blur(function(){
+            var fe_style = $(".fe_style").val();
+            var id = $(".recordNo").val();
+            var assets_equipment_no = id.substr(0,id.indexOf(";"));
+            if (assets_equipment_no == "") {
+                assets_equipment_no = id;
+            }
+            var fixedassets = {
+                "assetsNo": assets_equipment_no
+            };
+
+            var equipment = {
+                "equipmentNo": assets_equipment_no
+            };
+
+            var caseDto = {
+                "caseNo" : assets_equipment_no
+            };
+
+            var possessionsDto = {
+                "possessionsNo" : assets_equipment_no
+            };
+            if (fe_style == 1) {
+                //等于1是固定资产
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/fixedassets/findByNo",
+                        data: JSON.stringify(fixedassets),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                            	$(".status_hide").val(data.data.status);
+                                $(".recordName").val(data.data.assetsName);
+                            }
+                        },
+                        error: function () {
+                            alert("固定资产记录不存在");
+                        }
+                    });
+                }
+            } else if (fe_style == 2) {
+                //等于2是装备管理
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/equipment/findByNo",
+                        data: JSON.stringify(equipment),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                            	$(".status_hide").val(data.data.status);
+                                $(".recordName").val(data.data.equipmentName);
+                            }
+
+                        },
+                        error: function () {
+                            alert("装备记录不存在");
+                        }
+                    });
+                }
+            } else if (fe_style == 3){
+                //等于3是案卷
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/case/findByNoAndName",
+                        data: JSON.stringify(caseDto),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".status_hide").val("");
+                            } else {
+                            	$(".status_hide").val(data.data.fileStatus);
+                                $(".recordName").val(data.data.caseName);
+                            }
+
+                        },
+                        error: function () {
+                            alert("案卷不存在");
+                        }
+                    });
+                }
+            }else if (fe_style == 4) {
+                //等于4是财物
+                if (assets_equipment_no != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: url_server + "/erp/possessions/findByNo",
+                        data: JSON.stringify(possessionsDto),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.data == null) {
+                                $(".recordName").val("");
+                                $(".recordNo").val("");
+                            } else {
+                                $(".recordName").val(data.data.possessionsName);
+                            	$(".status_hide").val(data.data.status);
+                            }
+
+                        },
+                        error: function () {
+                            alert("财物不存在");
+                        }
+                    });
+                }
+            } else {
+                alert("编号不存在");
+            }
+        });
+
+    });
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

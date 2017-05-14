@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>案件信息详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />   <!-- 下面的样式，仅是为了显示代码，而不应该在项目中使用-->
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="detail-page">
+        <h2>基本信息</h2>
+        <div class="detail-section">
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>唯一ID：</label><span class="detail-text caseId"></span>
+                </div>
+                <div class="span8">
+                    <label>案件编号：</label><span class="detail-text caseNo"></span>
+                </div>
+                <div class="span8">
+                    <label>案件名称：</label><span class="detail-text caseName"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>案卷状态：</label><span class="detail-text caseStatus"></span>
+                </div>
+                <div class="span8">
+                    <label>档案状态：</label><span class="detail-text fileStatus"></span>
+                </div>
+                <div class="span8">
+                    <label>案件类型：</label><span class="detail-text style"></span>
+                </div>
+            </div>
+
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>民警登录名：</label><span class="detail-text policeLoginName"></span>
+                </div>
+                <div class="span8">
+                    <label>办案民警：</label><span class="detail-text policeName"></span>
+                </div>
+                <div class="span8">
+                    <label>结案时间：</label><span class="detail-text endTime"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>入库时间：</label><span class="detail-text startTime"></span>
+                </div>
+                <div class="span16">
+                    <label>案发地点：</label><span class="detail-text caseAddress"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>涉案财物编号：</label><span class="detail-text possessionsNo"></span>
+                </div>
+                <div class="span8">
+                    <label>涉案财物：</label><span class="detail-text possessionsName"></span>
+                </div>
+                <div class="span8">
+                    <label>是否督案：</label><span class="detail-text isCaseList"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>最后修改人：</label><span class="detail-text modifyName"></span>
+                </div>
+                <div class="span8">
+                    <label>最后修改时间：</label><span class="detail-text modifyTime"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span20">
+                    <label>简要案情：</label><span class="detail-text caseExplain" style="word-break: break-all;"></span>
+                </div>
+            </div>
+            <div class="row detail-row">
+                <div class="span20">
+                    <label>结案描述：</label><span class="detail-text endcaseExplain" style="word-break: break-all;"></span>
+                </div>
+            </div>
+
+            <div class="row detail-row">
+                <div class="span8">
+                    <label>结案状态：</label><span class="detail-text endcaseStatus"></span>
+                </div>
+            </div>
+            <div class="row endcaseUrl" style="height: 500px;">
+                <div class="control-group span24" style="width: 1200px;">
+                    <label class="control-label">结案文件</label>
+                    <div class="controls control-row4">
+                        <img src="" width="330" height="380" id="fileUrl"/>
+                        <img src="" width="330" height="380" id="fileUrl1"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-page susperctdiv" style="display: none;">
+        <h2>嫌疑人</h2>
+        <div class="detail-section susperctContent">
+        </div>
+    </div>
+
+    <div class="detail-page sonCasediv" style="display: none;">
+        <h2>子案件</h2>
+        <div class="detail-section sonCaseContent">
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+
+
+<script type="text/javascript">
+    var url_param = location.href;
+    var id = url_param.substr(url_param.lastIndexOf("=")+1);
+    if (null != id && "" != id) {
+        $.ajax({
+            type: "GET",
+            url: url_server + "/erp/case/findCaseDetailById?id="+id,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == 200) {
+
+                    //基本信息
+
+
+                    if (data.caseDto.caseAddUrl == "" || data.caseDto.caseAddUrl == null) {
+                        $(".endcaseUrl").css("display","none");
+                    } else {
+                        $(".endcaseUrl").css("display","block");
+                        var url = data.caseDto.caseAddUrl;
+                        var array = new Array();
+                        if (url != null && url != "") {
+                            array = url.split(";");
+                            $("#fileUrl").attr("src",img_server + array[0]);
+                            $("#fileUrl1").attr("src",img_server + array[1]);
+                        }
+                    }
+
+                    $(".caseId").html(isStrNull(data.caseDto.caseId));
+                    $(".caseNo").html(isStrNull(data.caseDto.caseNo));
+                    $(".caseName").html(isStrNull(data.caseDto.caseName));
+
+                    $(".caseStatus").html(caseStatus(isStrNull(data.caseDto.caseStatus)));
+                    $(".fileStatus").html(fileStatus(isStrNull(data.caseDto.fileStatus)));
+                    $(".style").html(fileStyle(isStrNull(data.caseDto.style)));
+
+                    $(".policeLoginName").html(isStrNull(data.caseDto.policeLoginName));
+                    $(".policeName").html(isStrNull(data.caseDto.policeName));
+                    $(".endTime").html(isStrNull(data.caseDto.endTime));
+
+                    $(".startTime").html(isStrNull(data.caseDto.startTime));
+                    $(".caseAddress").html(isStrNull(data.caseDto.caseAddress));
+
+                    $(".possessionsNo").html(isStrNull(data.caseDto.possessionsNo));
+                    $(".possessionsName").html(isStrNull(data.caseDto.possessionsName));
+                    $(".isCaseList").html(isCaseList(isStrNull(data.caseDto.isCaseList)));
+
+                    $(".modifyName").html(isStrNull(data.caseDto.modifyName));
+                    $(".modifyTime").html(isStrNull(data.caseDto.modifyTime));
+
+                    $(".endcaseExplain").html(isStrNull(data.caseDto.endcaseExplain));
+                    $(".caseExplain").html(isStrNull(data.caseDto.caseExplain));
+
+                    $(".endcaseStatus").html(endcaseStatus(isStrNull(data.caseDto.endcaseStatus)));
+
+                    //嫌疑人
+                    //susperctdiv
+                    if (data.caseDto.style == 2 && data.caseDto.suspectDtoList != null) {
+                        $(".susperctdiv").css("display","block");
+                        var html = "";
+                        for (var a = 0;a<data.caseDto.suspectDtoList.length;a++) {
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span8\"><label>嫌疑人姓名：</label><span class=\"detail-text\">"+isStrNull(data.caseDto.suspectDtoList[a].suspectName)+"</span></div>";
+                            html = html + "<div class=\"span8\"><label>嫌疑人电话：</label><span class=\"detail-text\">"+isStrNull(data.caseDto.suspectDtoList[a].identity)+"</span></div>";
+                            html = html + "<div class=\"span8\"><label>嫌疑人身份证：</label><span class=\"detail-text\">"+isStrNull(data.caseDto.suspectDtoList[a].mobileNo)+"</span></div>";
+                            html = html + "<div class=\"span8\"><label>备注信息：</label><span class=\"detail-text\"></span>"+isStrNull(data.caseDto.suspectDtoList[a].remarks)+"</div>";
+                            html = html + "</div>";
+                        }
+                        $(".susperctContent").html(html);
+                    } else {
+                        $(".susperctdiv").css("display","none");
+                    }
+
+                    /**
+                     * 必须是合并案件和有子案件的才显示子案件
+                     */
+                    if (data.caseDto.caseStatus ==4 && data.list != null) {
+                        $(".sonCasediv").css("display","block");
+                        var html = "";
+                        for (var i = 0;i<data.list.length;i++) {
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>案件编号：</label><span class=\"detail-text\">"+isStrNull(data.list[i].caseNo)+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>案件名称：</label><span class=\"detail-text\">"+isStrNull(data.list[i].caseName)+"</span>";
+                            html = html + "</div>";
+                            html = html + "	<div class=\"span8\">";
+                            html = html + "<label>案卷状态：</label><span class=\"detail-text\">"+caseStatus(isStrNull(data.list[i].caseStatus))+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>档案状态：</label><span class=\"detail-text\">"+fileStatus(isStrNull(data.list[i].caseStatus))+"</span>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>案件类型：</label><span class=\"detail-text\">"+fileStyle(isStrNull(data.list[i].style))+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>办案民警：</label><span class=\"detail-text\">"+isStrNull(data.list[i].policeName)+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>结案时间：</label><span class=\"detail-text\">"+isStrNull(data.list[i].endTime)+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>是否督案：</label><span class=\"detail-text\">"+isCaseList(isStrNull(data.list[i].isCaseList))+"</span>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>入库时间：</label><span class=\"detail-text\">"+isStrNull(data.list[i].startTime)+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span16\">";
+                            html = html + "<label>案发地点：</label><span class=\"detail-text\">"+isStrNull(data.list[i].caseAddress)+"</span>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"span8\">";
+                            html = html + "<label>涉案财物：</label><span class=\"detail-text\">"+isStrNull(data.list[i].possessionsName)+"</span>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span20\">";
+                            html = html + "<label>简要案情：</label><span class=\"detail-text\" style=\"word-break: break-all;\">"+isStrNull(data.list[i].caseExplain)+"</span>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+                            html = html + "<div class=\"row detail-row\">";
+                            html = html + "<div class=\"span20\">";
+                            html = html + "<label>结案描述：</label><span class=\"detail-text\" style=\"word-break: break-all;\">"+isStrNull(data.list[i].endcaseExplain)+"</span>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+
+                            /**
+                             * 结案图片
+                             */
+                            if (data.list[i].caseAddUrl != null ) {
+                                var url = data.list[i].caseAddUrl;
+                                var array = new Array();
+                                if (url != null && url != "") {
+                                    array = url.split(";");
+                                    html = html + "<div class=\"row endcaseUrl\" style=\"height: 500px;\">";
+                                    html = html + "<div class=\"control-group span24\" style=\"width: 1200px;\">";
+                                    html = html + "<label class=\"control-label\">结案文件</label>";
+                                    html = html + "<div class=\"controls control-row4\">";
+                                    html = html + "<img src=\" "+img_server + array[0]+" \" width=\"330\" height=\"380\"/>";
+                                    html = html + "<img src=\""+img_server + array[1]+"\" width=\"330\" height=\"380\"/>";
+                                    html = html + "</div>";
+                                    html = html + "</div>";
+                                    html = html + "</div>";
+                                }
+                            }
+
+                            /**
+                             * 嫌疑人
+                             */
+                            if (data.list[i].style == 2 && data.list[i].suspectDtoList != null) {
+                                for (var a = 0;a < data.list[i].suspectDtoList.length;a++) {
+                                    html = html + "<div class=\"row detail-row\">";
+                                    html = html + "<div class=\"span8\"><label>嫌疑人姓名：</label><span class=\"detail-text\">"+isStrNull(data.list[i].suspectDtoList[a].suspectName)+"</span></div>";
+                                    html = html + "<div class=\"span8\"><label>嫌疑人电话：</label><span class=\"detail-text\">"+isStrNull(data.list[i].suspectDtoList[a].identity)+"</span></div>";
+                                    html = html + "<div class=\"span8\"><label>嫌疑人身份证：</label><span class=\"detail-text\">"+isStrNull(data.list[i].suspectDtoList[a].mobileNo)+"</span></div>";
+                                    html = html + "<div class=\"span8\"><label>备注信息：</label><span class=\"detail-text\"></span>"+isStrNull(data.list[i].suspectDtoList[a].remarks)+"</div>";
+                                    html = html + "</div>";
+                                }
+                            }
+                            html =  html + "<hr style=\"border:1px dotted #036\" />";
+                        }
+                        $(".sonCaseContent").html(html);
+                    } else {
+                        $(".sonCasediv").css("display","none");
+                    }
+
+
+
+                } else if (data.code == 100) {
+                    BUI.Message.Alert("此条信息已经不存在!!");
+                } else {
+                    BUI.Message.Alert("操作失败,请返回重试!!");
+                }
+            },
+            error: function () {
+                alert("失败");
+            }
+        });
+    } else {
+        BUI.Message.Alert("此案件已不存在,请联系管理员!!");
+    }
+</script>
+
+</body>
+</html>

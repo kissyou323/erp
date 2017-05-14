@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>二维码打印</title>
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="../assets/js/config-min.js"></script>
+    <script type="text/javascript" src="../assets/util.js"></script>
+    <script type="text/javascript" src="../assets/json2.js"></script>
+    <script type="text/javascript" src="../assets/localStorage.js"></script>
+
+</head>
+<script language="javascript">
+
+    $(function(){
+        var url_param = location.href;
+        var assetsNo = url_param.substr(url_param.lastIndexOf("=")+1);
+
+        document.getElementById("code_img").src = qrcode_server + assetsNo + suffix;
+        document.getElementById("code_text").innerHTML = "编号:" + assetsNo;
+
+
+    });
+    function doPrint() {
+        //打开一个新的窗体
+        var newWin = window.open('about:blank',"","");
+        //取得id为"order"的<div id="print"></div>之间的内容
+        var titleHTML = document.getElementById("print").innerHTML;
+        //将取得的打印内容放入新窗体
+        newWin.document.write(titleHTML);
+        //刷新新窗体
+        newWin.document.location.reload();
+        //调用打印功能
+        newWin.print();
+
+//        document.getElementById("code_img").src = "";
+//        document.getElementById("code_text").innerHTML ="";
+
+        //打印完毕自动关闭新窗体
+
+        newWin.close();
+
+        top.topManager.closePage();
+    }
+</script>
+<body>
+<div  id="print">
+    <div style="width: 210px;height: 150px;margin-left: 20px;">
+        <img id="code_img" src="" style="width: 100px;height: 100px;"/>
+        <p id="code_text" style="margin: 0px;padding: 0px;font-size:15px;"></p>
+    </div>
+</div>
+<br />
+<br />
+<button onclick="doPrint()">打印</button>
+</body>
+</html>

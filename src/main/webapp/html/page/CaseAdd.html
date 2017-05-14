@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>案件新增</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/page-min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/laydate.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        code {
+            padding: 0px 4px;
+            color: #d14;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <form id="J_Form" class="form-horizontal" action="#">
+            <input type="hidden" name="caseId" value="">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件编号</label>
+                    <div class="controls">
+                        <input name="caseNo" type="grade" data-rules="{required:true}" class="input-normal control-text caseNo">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案件名称</label>
+                    <div class="controls">
+                        <input name="caseName" type="text" data-rules="{required:true}" class="input-normal control-text caseName">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--<div class="control-group span8">-->
+                    <!--<label class="control-label"><s>*</s>办案民警登录名</label>-->
+                    <!--<div class="controls">-->
+                        <!--<input name="policeLoginName" type="grade" data-rules="{required:true}" class="input-normal control-text policeLoginName">-->
+                    <!--</div>-->
+                <!--</div>-->
+
+
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>办案民警</label>
+                    <div class="controls">
+                    	<input name="policeLoginName" type="hidden" class="input-normal control-text policeLoginName" id="policeLoginName">
+                        <input name="policeName" type="grade" class="input-normal control-text policeName" readonly="readonly" id="policeName">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案发地点</label>
+                    <div class="controls">
+                        <input name="caseAddress" type="grade" data-rules="{required:true}" class="input-normal control-text caseAddress">
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案卷状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="caseStatus" class="input-normal caseStatus">
+                            <option value="1">未结案</option>
+                            <option value="2">已结案</option>
+                            <option value="3">案件撤销</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>档案状态：</label>
+                    <div class="controls">
+                        <select  data-rules="{required:true}"  name="fileStatus" class="input-normal fileStatus">
+                            <option value="2">建档</option>
+                            <option value="1">还入</option>
+                            <option value="3">借出</option>
+                            <option value="5">归档</option>
+                            <option value="4">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                <label class="control-label"><s>*</s>案件类型：</label>
+                <div class="controls">
+                    <select  data-rules="{required:true}"  name="style" class="input-normal style">
+                        <option value="1">行政</option>
+                        <option value="2">刑事</option>
+                    </select>
+                </div>
+            </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>案发时间</label>
+                    <div class="controls">
+                        <!--<input name="caseTime" type="text" data-rules="{required:true}" class="calendar">-->
+
+                        <input name="caseTime" id="caseTime" class="laydate-icon caseTime"/>
+                    </div>
+                </div>
+                <div class="control-group span8">
+                    <label class="control-label"><s>*</s>入库时间</label>
+                    <div class="controls">
+                        <!--<input name="startTime" type="text" data-rules="{required:true}" class="calendar">-->
+
+                        <input name="startTime" id="startTime" class="laydate-icon startTime"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">结案时间</label>
+                    <div class="controls">
+                        <!--<input name="endTime" type="text" class="calendar">-->
+                        <input name="endTime" id="endTime" class="laydate-icon endTime"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">涉案财物</label>
+                    <div class="controls">
+                    	<input name="possessionsList" type="button"  class="input-normal control-text possessionsList" id="possessionsList" readonly="readonly" />
+                        <input name="possessionsNo" type="hidden"  class="input-normal control-text possessionsNo" id="possessionsNo">
+                        <input name="possessionsName" type="hidden"  class="input-normal control-text possessionsName" id="possessionsName">
+                        <!-- <input name="posNo" type="hidden"  class="input-normal control-text posNo" id="posNo">
+                        <input name="posName" type="hidden"  class="input-normal control-text posName" id="posName"> -->
+                    </div>
+                </div>
+                <!-- <div class="control-group span8">
+                    <label class="control-label">涉案财物名称</label>
+                    <div class="controls">
+                        <input name="possessionsName" type="grade"  class="input-normal control-text possessionsName" readonly="readonly">
+                    </div>
+                </div> -->
+            </div>
+            <!-- <div class="row">
+            	<div class="control-group span8">
+            		<label class="control-label">涉案财物编号</label>
+	            	<div class="controls">
+	            		
+	            	</div>
+            	</div>
+            </div> -->
+            
+            <div class="row detail-row">
+                <div class="span8 offset3" id="possessionsNameList">
+                	
+                </div>
+            </div>
+            
+            <div class="row" style="height: 200px;">
+                <div class="control-group span15">
+                    <label class="control-label">简要案件</label>
+                    <div class="controls control-row4">
+                        <textarea name="caseExplain" class="input-large caseExplain" type="text"></textarea>
+                    </div>
+                </div>
+            </div>
+
+           <!-- <div class="row suspectsbtn" style="display: none;">
+                <div class="control-group span8">
+
+                    <label class="control-label"></label>
+                    <div class="controls control-row8">
+                        <a onclick="addSuspect();">添加嫌疑人</a>
+                    </div>
+                </div>
+            </div>-->
+            <!--犯罪嫌疑人-->
+            <div id="addSuspects" style="display: none;">
+                <div class="row suspect" >
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人1姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人2姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人3姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人4姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+                <div class="row suspect" >
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人5姓名</label>
+                        <div class="controls control-row8">
+                            <input name="suspectName" type="grade" data-rules="{required:true}" class="input-normal control-text suspectName">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人电话</label>
+                        <div class="controls control-row8">
+                            <input name="mobileNo" type="grade" data-rules="{required:true}" class="input-normal control-text mobileNo">
+                        </div>
+                    </div>
+                    <div class="control-group span8">
+                        <label class="control-label">嫌疑人身份证号码</label>
+                        <div class="controls control-row8">
+                            <input name="identity" type="grade" data-rules="{required:true}" class="input-normal control-text identity">
+                        </div>
+                    </div>
+                    <div class="control-group span15">
+                        <label class="control-label">备注信息</label>
+                        <div class="controls control-row4">
+                            <input name="remarks" type="grade"  class="input-normal control-text remarks">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="button" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<script type="text/javascript" src="../assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="../assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../assets/js/config-min.js"></script>
+<script type="text/javascript" src="../assets/util.js"></script>
+<script type="text/javascript" src="../assets/json2.js"></script>
+<script type="text/javascript" src="../assets/localStorage.js"></script>
+<script type="text/javascript" src="../assets/laydate.js"></script>
+<script type="text/javascript" src="../assets/js/layout-min.js"></script>
+<script type="text/javascript" src="../assets/caseAdd.js"></script>
+<script type="text/javascript">
+    BUI.use('common/page');
+</script>
+<script type="text/javascript">
+    BUI.use('bui/form',function (Form) {
+        var form = new Form.HForm({
+            srcNode : '#J_Form'
+        });
+
+        form.render();
+    });
+</script>
+</body>
+</html>

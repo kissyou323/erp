@@ -1,0 +1,1 @@
+INSERT INTO hcerp.t_user (id, login_name, password, user_name, mobile, count, createAt, islock, role_id, permission_id) VALUES ('1', 'admin', 'F6FDFFE48C908DEB0F4C3BD36C032E72', 'admin', '15381002812', '0', '2016-04-30 00:00:00', '2', '3', NULL);
