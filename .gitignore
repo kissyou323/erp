@@ -1,0 +1,10 @@
+/target/
+
+*.classpath
+*.prefs
+.settings/org.eclipse.wst.jsdt.ui.superType.name
+*.xml
+.settings/.jsdtscope
+*.component
+.settings/org.eclipse.wst.jsdt.ui.superType.container
+*.project
